@@ -1,5 +1,4 @@
 #include "NonBlockingServo.h"
-#include "config.h"
 
 NonBlockingServo::NonBlockingServo() {
   target_degree = 0;
@@ -17,9 +16,9 @@ void NonBlockingServo::begin() {
   write(0);
 }
 
-void NonBlockingServo::attach() { servo.attach(SERVO_PIN); }
-
-void NonBlockingServo::attach(int pin) { servo.attach(pin); }
+void NonBlockingServo::attach(int pin = SERVO_PIN) {
+  servo.attach(pin);
+}
 
 void NonBlockingServo::rotate(int degree) {
   target_degree = degree;
