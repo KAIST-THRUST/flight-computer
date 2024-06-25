@@ -3,9 +3,9 @@
  * @brief Main sketch file for execution of the flight computer.
  */
 
+#include "NonBlockingServo.h"
 #include "config.h"
 #include "util.h"
-#include "NonBlockingServo.h"
 
 static NonBlockingServo serv;
 
@@ -16,8 +16,8 @@ void setup() {
 }
 
 void loop() {
-  /*----------------------------------------------------------------*/
+  /*-----------------------------------------------------------------*/
   /* Servo part. */
   updateServoFromSerial(serv);
-  /*----------------------------------------------------------------*/
+  /*-----------------------------------------------------------------*/
 }

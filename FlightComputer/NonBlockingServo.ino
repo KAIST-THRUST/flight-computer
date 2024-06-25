@@ -1,5 +1,5 @@
-#include "config.h"
 #include "NonBlockingServo.h"
+#include "config.h"
 
 NonBlockingServo::NonBlockingServo() {
   target_degree = 0;

@@ -14,7 +14,7 @@ struct SensorData {
 class Sensor {
 public:
   virtual void begin() = 0;    // Begin method. Place it in setup().
-  virtual void Update() = 0;   // Update the sensorData attribute.
+  virtual void update() = 0;   // Update the sensorData attribute.
   virtual ~Sensor() = default; // Default destructor.
 
   const SensorData &getSensorData() const { // Getter for sensorData.

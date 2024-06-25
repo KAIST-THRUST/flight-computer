@@ -9,6 +9,6 @@
 #include "NonBlockingServo.h"
 #include "config.h"
 
-void updateServoFromSerial(NonBlockingServo& serv);
+void updateServoFromSerial(NonBlockingServo &serv);
 
 #endif
