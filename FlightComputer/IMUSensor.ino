@@ -2,7 +2,7 @@
 
 IMUSensor::IMUSensor() {
   bno = Adafruit_BNO055(55, 0x28, &Wire);
-  sensorData.data_count = IMU_DATA_COUNT;
+  sensorData.data_count = DATA_COUNT;
 }
 
 void IMUSensor::begin() {
@@ -13,3 +13,7 @@ void IMUSensor::begin() {
 }
 
 void IMUSensor::update() {}
+
+String IMUSensor::toString() {
+  return "IMU Sensor";
+}

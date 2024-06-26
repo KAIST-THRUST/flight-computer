@@ -16,9 +16,11 @@
 
 class IMUSensor : public Sensor {
 public:
+  enum IMUDataIndex { DATA_COUNT };
   IMUSensor();
   void begin() override;
   void update() override;
+  String toString() override;
 
 private:
   Adafruit_BNO055 bno;

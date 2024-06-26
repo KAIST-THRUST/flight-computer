@@ -16,6 +16,13 @@ void GPSSensor::begin() {
 }
 
 void GPSSensor::update() {
+  /* GPS update rate should not exceed 1Hz. */
+  static unsigned long last_update_time = 0;
+  unsigned long current_time = millis();
+
+  if (current_time - last_update_time < (1000 / GPS_SAMPLING_RATE))
+    return;
+
   char c = GPS.read();
 
   if (GPS.newNMEAreceived()) {
@@ -29,6 +36,14 @@ void GPSSensor::update() {
     sensorData.values[LONGITUDE] = GPS.longitude;
     sensorData.values[ALTITUDE] = GPS.altitude;
   }
+
+  last_update_time = current_time;
+}
+
+String GPSSensor::toString() {
+  return "Latitude: " + String(sensorData.values[LATITUDE]) +
+         ", Longitude: " + String(sensorData.values[LONGITUDE]) +
+         ", Altitude: " + String(sensorData.values[ALTITUDE]);
 }
 
 float GPSSensor::getLatitude() const {
