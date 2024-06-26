@@ -23,7 +23,7 @@ void GPSSensor::update() {
   if (current_time - last_update_time < (1000 / GPS_SAMPLING_RATE))
     return;
 
-  char c = GPS.read();
+  // char c = GPS.read(); // For debugging purposes.
 
   if (GPS.newNMEAreceived()) {
     if (!GPS.parse(GPS.lastNMEA()))
