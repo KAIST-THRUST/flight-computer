@@ -1,5 +1,5 @@
 /**
- * @file IMU.h
+ * @file IMUSensor.h
  * @brief A IMU class that reads data from BNO 055 sensor.
  */
 
