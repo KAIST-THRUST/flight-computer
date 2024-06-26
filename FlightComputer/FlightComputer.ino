@@ -9,6 +9,7 @@
 #include "SensorSet.h"
 #include "config.h"
 #include "util.h"
+#include "SDManager.h"
 
 /* Sensors to receive data. */
 static NonBlockingServo serv;
