@@ -12,7 +12,7 @@ static NonBlockingServo serv;
 static IMUSensor imu_sensor;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(BAUD_RATE);
   Serial.println("Hello World!"); // serial monitor test.
   serv.begin();
 }
