@@ -6,9 +6,11 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
+#include "config.h"
+
 struct SensorData {
-  float values[10] = {}; // Array of sensor output values.
-  int data_count;        // Number of output data points.
+  float values[MAX_DATA_COUNT] = {}; // Array of sensor output values.
+  int data_count;                    // Number of output data points.
 };
 
 class Sensor {
