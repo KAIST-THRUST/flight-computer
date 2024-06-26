@@ -14,6 +14,6 @@ void IMUSensor::begin() {
 
 void IMUSensor::update() {}
 
-String IMUSensor::toString() {
+String IMUSensor::toString() const {
   return "IMU Sensor";
 }

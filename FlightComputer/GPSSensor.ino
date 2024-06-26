@@ -40,7 +40,7 @@ void GPSSensor::update() {
   last_update_time = current_time;
 }
 
-String GPSSensor::toString() {
+String GPSSensor::toString() const {
   return "Latitude: " + String(sensorData.values[LATITUDE]) +
          ", Longitude: " + String(sensorData.values[LONGITUDE]) +
          ", Altitude: " + String(sensorData.values[ALTITUDE]);

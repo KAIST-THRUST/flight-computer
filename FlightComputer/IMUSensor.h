@@ -20,7 +20,7 @@ public:
   IMUSensor();
   void begin() override;
   void update() override;
-  String toString() override;
+  String toString() const override;
 
 private:
   Adafruit_BNO055 bno;

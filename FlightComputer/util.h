@@ -17,6 +17,6 @@ void updateServoFromSerial(NonBlockingServo &serv);
 void printErrorMessageToSerial(String s);
 
 /* Print sensor data information to serial monitor. */
-void printSensorDataToSerial(Sensor &sensor);
+void printSensorDataToSerial(const Sensor &sensor);
 
 #endif

@@ -18,7 +18,7 @@ public:
   GPSSensor();
   void begin() override;
   void update() override;
-  String toString() override;
+  String toString() const override;
 
   float getLatitude() const;
   float getLongitude() const;

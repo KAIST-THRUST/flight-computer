@@ -17,6 +17,6 @@ void printErrorMessageToSerial(String s) {
   Serial.println(s);
 }
 
-void printSensorDataToSerial(Sensor &sensor) {
+void printSensorDataToSerial(const Sensor &sensor) {
   Serial.println(sensor.toString());
 }
