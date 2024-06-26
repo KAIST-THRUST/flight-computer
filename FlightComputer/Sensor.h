@@ -7,8 +7,8 @@
 #define SENSOR_H
 
 struct SensorData {
-  float values[10]; // Array of sensor output values.
-  int data_count;   // Number of output data points.
+  float values[10] = {}; // Array of sensor output values.
+  int data_count;        // Number of output data points.
 };
 
 class Sensor {
