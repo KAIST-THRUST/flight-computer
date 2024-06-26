@@ -11,3 +11,8 @@ void updateServoFromSerial(NonBlockingServo &serv) {
     serv.rotate(degree);
   }
 }
+
+void printErrorMessageToSerial(String s) {
+  Serial.print("Error: ");
+  Serial.println(s);
+}
