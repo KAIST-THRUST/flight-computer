@@ -6,6 +6,7 @@
 #include "GPSSensor.h"
 #include "IMUSensor.h"
 #include "NonBlockingServo.h"
+#include "SensorSet.h"
 #include "config.h"
 #include "util.h"
 

@@ -12,6 +12,7 @@
 #define BAUD_RATE 115200    // Baud rate of the main serial port.
 #define GPSSERIAL Serial2   // Serial name connected to GPS.
 #define MAX_DATA_COUNT 10   // Maximum number of sensor output data.
+#define N_SENSORS 6         // Number of sensors.
 #define SERVO_PIN 2         // Servo motor pin number.
 #define SAMPLING_RATE 100   // Base sampling rate, in Hz.
 #define GPS_SAMPLING_RATE 1 // GPS sampling rate, in Hz.
