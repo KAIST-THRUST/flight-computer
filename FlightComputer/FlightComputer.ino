@@ -6,15 +6,22 @@
 #include "GPSSensor.h"
 #include "IMUSensor.h"
 #include "NonBlockingServo.h"
+#include "PressureSensor.h"
+#include "SDManager.h"
 #include "SensorSet.h"
 #include "config.h"
 #include "util.h"
-#include "SDManager.h"
+
+/* Servo motor. */
+static NonBlockingServo serv;
 
 /* Sensors to receive data. */
-static NonBlockingServo serv;
 static IMUSensor imu_sensor;
 static GPSSensor gps_sensor;
+static PressureSensor pressure_sensor;
+
+/* SD card manager. */
+static SDManager sd_manager;
 
 /* Time variables for non-blocking delay(). */
 static unsigned long last_update_time = 0;
@@ -26,6 +33,10 @@ void setup() {
   serv.begin();
   imu_sensor.begin();
   gps_sensor.begin();
+  pressure_sensor.begin();
+  delay(1000); // Wait for sensors to initialize.
+  sd_manager.begin();
+  sd_manager.write("Test string.");
 }
 
 void loop() {
@@ -41,8 +52,10 @@ void loop() {
     last_update_time = current_time;
     imu_sensor.update();
     gps_sensor.update();
+    pressure_sensor.update();
     printSensorDataToSerial(imu_sensor);
     printSensorDataToSerial(gps_sensor);
+    printSensorDataToSerial(pressure_sensor);
   }
   /*-----------------------------------------------------------------*/
 }
