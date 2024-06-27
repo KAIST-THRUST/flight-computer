@@ -12,6 +12,8 @@
 #include "util.h"
 #include <Adafruit_GPS.h>
 
+#define GPSECHO false
+
 class GPSSensor : public Sensor {
 public:
   enum GPSDataIndex { LATITUDE, LONGITUDE, ALTITUDE, DATA_COUNT };

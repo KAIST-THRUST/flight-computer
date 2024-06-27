@@ -13,6 +13,10 @@ void GPSSensor::begin() {
   /* 1Hz update rate. */
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
   GPS.sendCommand(PGCMD_ANTENNA);
+
+  delay(1000);
+
+  GPSSERIAL.println(PMTK_Q_RELEASE);
 }
 
 void GPSSensor::update() {
@@ -23,7 +27,12 @@ void GPSSensor::update() {
   if (current_time - last_update_time < (1000 / GPS_SAMPLING_RATE))
     return;
 
-  // char c = GPS.read(); // For debugging purposes.
+  char c = GPS.read(); // For debugging purposes.
+
+  // if you want to debug, this is a good time to do it!
+  if (GPSECHO)
+    if (c)
+      Serial.print(c);
 
   if (GPS.newNMEAreceived()) {
     if (!GPS.parse(GPS.lastNMEA()))
