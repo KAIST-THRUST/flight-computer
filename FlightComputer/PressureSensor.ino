@@ -7,7 +7,7 @@ PressureSensor::PressureSensor()
 }
 
 void PressureSensor::begin() {
-  if (!bmp.begin()) {
+  if (!bmp.begin(PRESSURE_I2C_ADDRESS)) {
     printErrorMessageToSerial(
         "no BMP280 detected ... Check your wiring or I2C ADDR!");
   }
