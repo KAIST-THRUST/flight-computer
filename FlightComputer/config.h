@@ -21,6 +21,7 @@
 
 /* Pressure sensor(BMP280) configurations. */
 #define PRESSURE_I2C_ADDRESS 0x76 // I2C address of BMP280 sensor.
+#define PRESSURE_WIRE Wire1       // Wire name connected to BMP280.
 
 /* GPS sensor configurations. */
 #define GPSSERIAL Serial2   // Serial name connected to GPS.

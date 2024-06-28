@@ -1,7 +1,7 @@
 #include "PressureSensor.h"
 
 PressureSensor::PressureSensor()
-    : bmp(), bmp_pressure(bmp.getPressureSensor()),
+    : bmp(&PRESSURE_WIRE), bmp_pressure(bmp.getPressureSensor()),
       bmp_temp(bmp.getTemperatureSensor()) {
   sensorData.data_count = DATA_COUNT;
 }
