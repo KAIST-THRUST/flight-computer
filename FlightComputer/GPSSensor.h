@@ -16,7 +16,13 @@
 
 class GPSSensor : public Sensor {
 public:
-  enum GPSDataIndex { LATITUDE, LONGITUDE, ALTITUDE, DATA_COUNT };
+  enum GPSDataIndex {
+    LATITUDE,  // in degrees/minutes
+    LONGITUDE, // in degrees/minutes
+    ALTITUDE,  // in meters
+    SPEED,     // in m/s
+    DATA_COUNT
+  };
   GPSSensor();
   void begin() override;
   void update() override;

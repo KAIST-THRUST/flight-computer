@@ -27,6 +27,8 @@ void GPSSensor::update() {
   if (current_time - last_update_time < (1000 / GPS_SAMPLING_RATE))
     return;
 
+  last_update_time = current_time;
+
   char c = GPS.read(); // For debugging purposes.
 
   // if you want to debug, this is a good time to do it!
@@ -41,18 +43,22 @@ void GPSSensor::update() {
   }
 
   if (GPS.fix) {
-    sensorData.values[LATITUDE] = GPS.latitude;
-    sensorData.values[LONGITUDE] = GPS.longitude;
-    sensorData.values[ALTITUDE] = GPS.altitude;
-  }
+    /* Direction of latitude and longitude in sign. */
+    int lat_dir = (GPS.lat == 'N') ? 1 : -1;
+    int lon_dir = (GPS.lon == 'E') ? 1 : -1;
 
-  last_update_time = current_time;
+    sensorData.values[LATITUDE] = GPS.latitude * lat_dir;
+    sensorData.values[LONGITUDE] = GPS.longitude * lon_dir;
+    sensorData.values[ALTITUDE] = GPS.altitude;
+    sensorData.values[SPEED] = GPS.speed * 0.51444; // Convert to m/s.
+  }
 }
 
 String GPSSensor::toString() const {
   return "Latitude: " + String(sensorData.values[LATITUDE]) +
          ", Longitude: " + String(sensorData.values[LONGITUDE]) +
-         ", Altitude: " + String(sensorData.values[ALTITUDE]);
+         ", Altitude: " + String(sensorData.values[ALTITUDE]) +
+         ", Speed: " + String(sensorData.values[SPEED]);
 }
 
 float GPSSensor::getLatitude() const {
