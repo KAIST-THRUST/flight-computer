@@ -16,7 +16,19 @@
 
 class IMUSensor : public Sensor {
 public:
-  enum IMUDataIndex { DATA_COUNT };
+  enum IMUDataIndex {
+    ACC_X,     // x axis acceleration, in m/s^2
+    ACC_Y,     // y axis acceleration, in m/s^2
+    ACC_Z,     // z axis acceleration, in m/s^2
+    ANG_VEL_X, // x axis angular velocity, in rad/s
+    ANG_VEL_Y, // y axis angular velocity, in rad/s
+    ANG_VEL_Z, // z axis angular velocity, in rad/s
+    QUAT_X,    // x axis quaternion
+    QUAT_Y,    // y axis quaternion
+    QUAT_Z,    // z axis quaternion
+    QUAT_W,    // w axis quaternion
+    DATA_COUNT
+  };
   IMUSensor();
   void begin() override;
   void update() override;

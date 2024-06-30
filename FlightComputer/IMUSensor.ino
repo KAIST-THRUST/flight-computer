@@ -1,7 +1,7 @@
 #include "IMUSensor.h"
 
 IMUSensor::IMUSensor() {
-  bno = Adafruit_BNO055(55, 0x28, &Wire);
+  bno = Adafruit_BNO055(55, IMU_I2C_ADDRESS, &IMU_WIRE);
   sensorData.data_count = DATA_COUNT;
 }
 
@@ -12,8 +12,39 @@ void IMUSensor::begin() {
   }
 }
 
-void IMUSensor::update() {}
+void IMUSensor::update() {
+  sensors_event_t angVelocityData, accelerometerData;
+  bno.getEvent(&angVelocityData, Adafruit_BNO055::VECTOR_GYROSCOPE);
+  bno.getEvent(&accelerometerData,
+               Adafruit_BNO055::VECTOR_ACCELEROMETER);
+
+  /* Get acceleration data */
+  sensorData.values[ACC_X] = accelerometerData.acceleration.x;
+  sensorData.values[ACC_Y] = accelerometerData.acceleration.y;
+  sensorData.values[ACC_Z] = accelerometerData.acceleration.z;
+
+  /* Get angular velocity data */
+  sensorData.values[ANG_VEL_X] = angVelocityData.gyro.x;
+  sensorData.values[ANG_VEL_Y] = angVelocityData.gyro.y;
+  sensorData.values[ANG_VEL_Z] = angVelocityData.gyro.z;
+
+  /* Get quaternion data */
+  imu::Quaternion quat = bno.getQuat();
+  sensorData.values[QUAT_X] = quat.x();
+  sensorData.values[QUAT_Y] = quat.y();
+  sensorData.values[QUAT_Z] = quat.z();
+  sensorData.values[QUAT_W] = quat.w();
+}
 
 String IMUSensor::toString() const {
-  return "IMU Sensor";
+  return "Acc: (x:" + String(sensorData.values[ACC_X]) +
+         ", y:" + String(sensorData.values[ACC_Y]) +
+         ", z:" + String(sensorData.values[ACC_Z]) + "), " +
+         "AngVel: (x:" + String(sensorData.values[ANG_VEL_X]) +
+         ", y:" + String(sensorData.values[ANG_VEL_Y]) +
+         ", z:" + String(sensorData.values[ANG_VEL_Z]) + "), " +
+         "Quat: (x:" + String(sensorData.values[QUAT_X]) +
+         ", y:" + String(sensorData.values[QUAT_Y]) +
+         ", z:" + String(sensorData.values[QUAT_Z]) +
+         ", w:" + String(sensorData.values[QUAT_W]) + ")";
 }

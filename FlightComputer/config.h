@@ -23,6 +23,10 @@
 #define PRESSURE_I2C_ADDRESS 0x76 // I2C address of BMP280 sensor.
 #define PRESSURE_WIRE Wire1       // Wire name connected to BMP280.
 
+/* IMU sensor(BNO055) configurations. */
+#define IMU_I2C_ADDRESS 0x28 // I2C address of BNO055 sensor.
+#define IMU_WIRE Wire        // Wire name connected to BNO055.
+
 /* GPS sensor configurations. */
 #define GPSSERIAL Serial2   // Serial name connected to GPS.
 #define GPS_SAMPLING_RATE 1 // GPS sampling rate, in Hz.
