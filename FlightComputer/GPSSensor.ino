@@ -1,6 +1,6 @@
 #include "GPSSensor.h"
 
-GPSSensor::GPSSensor() : GPS(&GPSSERIAL) {
+GPSSensor::GPSSensor() : GPS(&GPS_SERIAL) {
   sensorData.data_count = DATA_COUNT;
 }
 
@@ -16,7 +16,7 @@ void GPSSensor::begin() {
 
   delay(1000);
 
-  GPSSERIAL.println(PMTK_Q_RELEASE);
+  GPS_SERIAL.println(PMTK_Q_RELEASE);
 }
 
 void GPSSensor::update() {

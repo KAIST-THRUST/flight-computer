@@ -28,7 +28,7 @@
 #define IMU_WIRE Wire        // Wire name connected to BNO055.
 
 /* GPS sensor configurations. */
-#define GPSSERIAL Serial2   // Serial name connected to GPS.
+#define GPS_SERIAL Serial2   // Serial name connected to GPS.
 #define GPS_SAMPLING_RATE 1 // GPS sampling rate, in Hz.
 
 /* SD card configurations. */

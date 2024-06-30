@@ -37,13 +37,13 @@ void IMUSensor::update() {
 }
 
 String IMUSensor::toString() const {
-  return "Acc: (x:" + String(sensorData.values[ACC_X]) +
+  return "Acceleration: (x:" + String(sensorData.values[ACC_X]) +
          ", y:" + String(sensorData.values[ACC_Y]) +
          ", z:" + String(sensorData.values[ACC_Z]) + "), " +
-         "AngVel: (x:" + String(sensorData.values[ANG_VEL_X]) +
+         "Angular velocity: (x:" + String(sensorData.values[ANG_VEL_X]) +
          ", y:" + String(sensorData.values[ANG_VEL_Y]) +
          ", z:" + String(sensorData.values[ANG_VEL_Z]) + "), " +
-         "Quat: (x:" + String(sensorData.values[QUAT_X]) +
+         "Quaternion: (x:" + String(sensorData.values[QUAT_X]) +
          ", y:" + String(sensorData.values[QUAT_Y]) +
          ", z:" + String(sensorData.values[QUAT_Z]) +
          ", w:" + String(sensorData.values[QUAT_W]) + ")";
