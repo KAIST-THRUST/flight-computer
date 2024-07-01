@@ -40,7 +40,8 @@ String IMUSensor::toString() const {
   return "Acceleration: (x:" + String(sensorData.values[ACC_X]) +
          ", y:" + String(sensorData.values[ACC_Y]) +
          ", z:" + String(sensorData.values[ACC_Z]) + "), " +
-         "Angular velocity: (x:" + String(sensorData.values[ANG_VEL_X]) +
+         "Angular velocity: (x:" +
+         String(sensorData.values[ANG_VEL_X]) +
          ", y:" + String(sensorData.values[ANG_VEL_Y]) +
          ", z:" + String(sensorData.values[ANG_VEL_Z]) + "), " +
          "Quaternion: (x:" + String(sensorData.values[QUAT_X]) +
