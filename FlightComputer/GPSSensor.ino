@@ -53,12 +53,11 @@ void GPSSensor::update() {
     sensorData.values[SPEED] = GPS.speed * 0.51444; // Convert to m/s.
   }
 }
-
 String GPSSensor::toString() const {
-  return "[GPS] Latitude: " + String(sensorData.values[LATITUDE], 5) +
-         ", Longitude: " + String(sensorData.values[LONGITUDE], 5) +
-         ", Altitude: " + String(sensorData.values[ALTITUDE], 5) +
-         ", Speed: " + String(sensorData.values[SPEED], 5);
+  return "[GPS] Latitude: " + String(sensorData.values[LATITUDE], 7) +
+         ", Longitude: " + String(sensorData.values[LONGITUDE], 7) +
+         ", Altitude: " + String(sensorData.values[ALTITUDE], 7) +
+         ", Speed: " + String(sensorData.values[SPEED], 7);
 }
 
 float GPSSensor::getLatitude() const {

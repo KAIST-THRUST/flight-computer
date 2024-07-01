@@ -33,7 +33,7 @@ void BarometerSensor::update() {
 
 String BarometerSensor::toString() const {
   return "[Barometer] Pressure: " +
-         String(sensorData.values[PRESSURE], 5) +
-         ", Temperature: " + String(sensorData.values[TEMPERATURE], 5) +
-         ", Altitude: " + String(sensorData.values[ALTITUDE], 5);
+         String(sensorData.values[PRESSURE], 7) +
+         ", Temperature: " + String(sensorData.values[TEMPERATURE], 7) +
+         ", Altitude: " + String(sensorData.values[ALTITUDE], 7);
 }
