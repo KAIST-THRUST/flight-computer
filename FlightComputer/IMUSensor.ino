@@ -37,15 +37,16 @@ void IMUSensor::update() {
 }
 
 String IMUSensor::toString() const {
-  return "Acceleration: (x:" + String(sensorData.values[ACC_X]) +
-         ", y:" + String(sensorData.values[ACC_Y]) +
-         ", z:" + String(sensorData.values[ACC_Z]) + "), " +
+  return "[IMU] Acceleration: (x:" +
+         String(sensorData.values[ACC_X], 5) +
+         ", y:" + String(sensorData.values[ACC_Y], 5) +
+         ", z:" + String(sensorData.values[ACC_Z], 5) + "), " +
          "Angular velocity: (x:" +
-         String(sensorData.values[ANG_VEL_X]) +
-         ", y:" + String(sensorData.values[ANG_VEL_Y]) +
-         ", z:" + String(sensorData.values[ANG_VEL_Z]) + "), " +
-         "Quaternion: (x:" + String(sensorData.values[QUAT_X]) +
-         ", y:" + String(sensorData.values[QUAT_Y]) +
-         ", z:" + String(sensorData.values[QUAT_Z]) +
-         ", w:" + String(sensorData.values[QUAT_W]) + ")";
+         String(sensorData.values[ANG_VEL_X], 5) +
+         ", y:" + String(sensorData.values[ANG_VEL_Y], 5) +
+         ", z:" + String(sensorData.values[ANG_VEL_Z], 5) + "), " +
+         "Quaternion: (x:" + String(sensorData.values[QUAT_X], 5) +
+         ", y:" + String(sensorData.values[QUAT_Y], 5) +
+         ", z:" + String(sensorData.values[QUAT_Z], 5) +
+         ", w:" + String(sensorData.values[QUAT_W], 5) + ")";
 }

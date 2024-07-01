@@ -53,9 +53,11 @@ void loop() {
     imu_sensor.update();
     gps_sensor.update();
     barometer_sensor.update();
+    Serial.println("------------------------------------------------");
     printSensorDataToSerial(imu_sensor);
     printSensorDataToSerial(gps_sensor);
     printSensorDataToSerial(barometer_sensor);
+    Serial.println("------------------------------------------------");
   }
   /*-----------------------------------------------------------------*/
 }

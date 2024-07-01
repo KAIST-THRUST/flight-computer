@@ -55,10 +55,10 @@ void GPSSensor::update() {
 }
 
 String GPSSensor::toString() const {
-  return "Latitude: " + String(sensorData.values[LATITUDE]) +
-         ", Longitude: " + String(sensorData.values[LONGITUDE]) +
-         ", Altitude: " + String(sensorData.values[ALTITUDE]) +
-         ", Speed: " + String(sensorData.values[SPEED]);
+  return "[GPS] Latitude: " + String(sensorData.values[LATITUDE], 5) +
+         ", Longitude: " + String(sensorData.values[LONGITUDE], 5) +
+         ", Altitude: " + String(sensorData.values[ALTITUDE], 5) +
+         ", Speed: " + String(sensorData.values[SPEED], 5);
 }
 
 float GPSSensor::getLatitude() const {
