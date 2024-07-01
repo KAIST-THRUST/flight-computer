@@ -10,14 +10,22 @@
 
 class SensorSet {
 public:
+  enum SensorType {
+    GPS,
+    IMU,
+    BAROMETER,
+    VOLTMETER,
+    PRESSURE,
+    SENSOR_COUNT
+  };
   SensorSet();
-  void addSensor(Sensor *sensor); // Add a sensor to the set.
-  void beginAll();                // Begin all sensors.
-  void updateAll();               // Update all sensors.
+  // Add a sensor to the set.
+  void addSensor(Sensor *sensor, enum SensorType sensor_type);
+  void beginAll();  // Begin all sensors.
+  void updateAll(); // Update all sensors.
 
 private:
-  Sensor *sensors[N_SENSORS];
-  int sensor_count;
+  Sensor *sensors[SENSOR_COUNT];
 };
 
 #endif

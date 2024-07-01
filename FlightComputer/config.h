@@ -12,7 +12,6 @@
 /* Basic configurations. */
 #define BAUD_RATE 115200  // Baud rate of the main serial port.
 #define MAX_DATA_COUNT 10 // Maximum number of sensor output data.
-#define N_SENSORS 6       // Number of sensors.
 #define SAMPLING_RATE 100 // Base sampling rate, in Hz.
 
 /* Servo motor configurations. */
