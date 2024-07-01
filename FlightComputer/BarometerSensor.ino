@@ -1,13 +1,13 @@
-#include "PressureSensor.h"
+#include "BarometerSensor.h"
 
-PressureSensor::PressureSensor()
-    : bmp(&PRESSURE_WIRE), bmp_pressure(bmp.getPressureSensor()),
+BarometerSensor::BarometerSensor()
+    : bmp(&BAROMETER_WIRE), bmp_pressure(bmp.getPressureSensor()),
       bmp_temp(bmp.getTemperatureSensor()) {
   sensorData.data_count = DATA_COUNT;
 }
 
-void PressureSensor::begin() {
-  if (!bmp.begin(PRESSURE_I2C_ADDRESS)) {
+void BarometerSensor::begin() {
+  if (!bmp.begin(BAROMETER_I2C_ADDRESS)) {
     printErrorMessageToSerial(
         "no BMP280 detected ... Check your wiring or I2C ADDR!");
   }
@@ -22,7 +22,7 @@ void PressureSensor::begin() {
   bmp_temp->printSensorDetails();
 }
 
-void PressureSensor::update() {
+void BarometerSensor::update() {
   sensors_event_t temp_event, pressure_event;
   bmp_temp->getEvent(&temp_event);
   bmp_pressure->getEvent(&pressure_event);
@@ -31,7 +31,7 @@ void PressureSensor::update() {
   sensorData.values[ALTITUDE] = bmp.readAltitude(SEA_LEVEL_HPA);
 }
 
-String PressureSensor::toString() const {
+String BarometerSensor::toString() const {
   return "Pressure: " + String(sensorData.values[PRESSURE]) +
          ", Temperature: " + String(sensorData.values[TEMPERATURE]) +
          ", Altitude: " + String(sensorData.values[ALTITUDE]);

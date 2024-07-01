@@ -1,10 +1,10 @@
 /**
- * @file PressureSensor.h
- * @brief A pressure sensor class that reads data from BMP280 sensor.
+ * @file BarometerSensor.h
+ * @brief A Barometer sensor class that reads data from BMP280 sensor.
  */
 
-#ifndef PRESSURESENSOR_H
-#define PRESSURESENSOR_H
+#ifndef BAROMETERSENSOR_H
+#define BAROMETERSENSOR_H
 
 #include "Sensor.h"
 #include "config.h"
@@ -13,15 +13,15 @@
 #include <SPI.h>
 #include <Wire.h>
 
-class PressureSensor : public Sensor {
+class BarometerSensor : public Sensor {
 public:
-  enum PressureDataIndex {
+  enum BarometerDataIndex {
     PRESSURE,    // in hPa
     TEMPERATURE, // in Celsius
     ALTITUDE,    // in meters
     DATA_COUNT
   };
-  PressureSensor();
+  BarometerSensor();
   void begin() override;
   void update() override;
   String toString() const override;

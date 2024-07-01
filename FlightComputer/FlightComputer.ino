@@ -3,10 +3,10 @@
  * @brief Main sketch file for execution of the flight computer.
  */
 
+#include "BarometerSensor.h"
 #include "GPSSensor.h"
 #include "IMUSensor.h"
 #include "NonBlockingServo.h"
-#include "PressureSensor.h"
 #include "SDManager.h"
 #include "SensorSet.h"
 #include "config.h"
@@ -18,7 +18,7 @@ static NonBlockingServo serv;
 /* Sensors to receive data. */
 static IMUSensor imu_sensor;
 static GPSSensor gps_sensor;
-static PressureSensor pressure_sensor;
+static BarometerSensor barometer_sensor;
 
 /* SD card manager. */
 static SDManager sd_manager;
@@ -33,7 +33,7 @@ void setup() {
   serv.begin();
   imu_sensor.begin();
   gps_sensor.begin();
-  pressure_sensor.begin();
+  barometer_sensor.begin();
   delay(1000); // Wait for sensors to initialize.
   sd_manager.begin();
   sd_manager.write("Test string.");
@@ -52,10 +52,10 @@ void loop() {
     last_update_time = current_time;
     imu_sensor.update();
     gps_sensor.update();
-    pressure_sensor.update();
+    barometer_sensor.update();
     printSensorDataToSerial(imu_sensor);
     printSensorDataToSerial(gps_sensor);
-    printSensorDataToSerial(pressure_sensor);
+    printSensorDataToSerial(barometer_sensor);
   }
   /*-----------------------------------------------------------------*/
 }

@@ -19,9 +19,9 @@
 #define SERVO_PIN 2        // Servo motor pin number.
 #define ROTATION_SPEED 0.2 // Rotation speed in (degree/ms).
 
-/* Pressure sensor(BMP280) configurations. */
-#define PRESSURE_I2C_ADDRESS 0x76 // I2C address of BMP280 sensor.
-#define PRESSURE_WIRE Wire1       // Wire name connected to BMP280.
+/* Barometer sensor(BMP280) configurations. */
+#define BAROMETER_I2C_ADDRESS 0x76 // I2C address of BMP280 sensor.
+#define BAROMETER_WIRE Wire1       // Wire name connected to BMP280.
 
 /* IMU sensor(BNO055) configurations. */
 #define IMU_I2C_ADDRESS 0x28  // I2C address of BNO055 sensor.
