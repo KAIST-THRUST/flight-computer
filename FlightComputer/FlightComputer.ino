@@ -54,6 +54,8 @@ void loop() {
     gps_sensor.update();
     barometer_sensor.update();
     Serial.println("------------------------------------------------");
+    Serial.print("Time: ");
+    Serial.println(current_time);
     printSensorDataToSerial(imu_sensor);
     printSensorDataToSerial(gps_sensor);
     printSensorDataToSerial(barometer_sensor);
