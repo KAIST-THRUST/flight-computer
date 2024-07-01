@@ -28,7 +28,7 @@ void PressureSensor::update() {
   bmp_pressure->getEvent(&pressure_event);
   sensorData.values[PRESSURE] = pressure_event.pressure;
   sensorData.values[TEMPERATURE] = temp_event.temperature;
-  sensorData.values[ALTITUDE] = bmp.readAltitude(1013.25);
+  sensorData.values[ALTITUDE] = bmp.readAltitude(SEA_LEVEL_HPA);
 }
 
 String PressureSensor::toString() const {
