@@ -17,10 +17,11 @@
 class GPSSensor : public Sensor {
 public:
   enum GPSDataIndex {
-    LATITUDE,  // in degrees/minutes
-    LONGITUDE, // in degrees/minutes
-    ALTITUDE,  // in meters
-    SPEED,     // in m/s
+    LATITUDE,     // in degrees/minutes
+    LONGITUDE,    // in degrees/minutes
+    ALTITUDE,     // in meters
+    ALTITUDE_AVG, // in meters
+    SPEED,        // in m/s
     DATA_COUNT
   };
   GPSSensor();
@@ -34,6 +35,7 @@ public:
 
 private:
   Adafruit_GPS GPS;
+  AverageSensorValue altitude_avg;
 };
 
 #endif

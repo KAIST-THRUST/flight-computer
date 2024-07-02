@@ -51,8 +51,13 @@ void GPSSensor::update() {
     sensorData.values[LONGITUDE] = GPS.longitude * lon_dir;
     sensorData.values[ALTITUDE] = GPS.altitude;
     sensorData.values[SPEED] = GPS.speed * 0.51444; // Convert to m/s.
+    if (millis() <= 60 * 1000) {
+      altitude_avg.addValue(sensorData.values[ALTITUDE]);
+      sensorData.values[ALTITUDE_AVG] = altitude_avg.getAverage();
+    }
   }
 }
+
 String GPSSensor::toString() const {
   return "[GPS] Latitude: " + String(sensorData.values[LATITUDE], 7) +
          ", Longitude: " + String(sensorData.values[LONGITUDE], 7) +
