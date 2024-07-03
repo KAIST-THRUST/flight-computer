@@ -11,6 +11,7 @@
 #include "config.h"
 #include "util.h"
 #include <Adafruit_GPS.h>
+#include <HardwareSerial.h>
 
 #define GPSECHO false
 
