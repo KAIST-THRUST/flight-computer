@@ -3,9 +3,6 @@
  * @brief Main sketch file for execution of the flight computer.
  */
 
-#include "BarometerSensor.h"
-#include "GPSSensor.h"
-#include "IMUSensor.h"
 #include "NonBlockingServo.h"
 #include "SDManager.h"
 #include "SensorSet.h"
