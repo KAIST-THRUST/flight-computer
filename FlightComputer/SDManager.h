@@ -14,12 +14,17 @@
 
 class SDManager {
 public:
-  SDManager();
+  SDManager(String file_name = FILE_NAME);
   void begin();                   // Initialize SD card.
   void write(const String &data); // Write data to SD card.
+  void open();                    // Open the file.
+  void close();                   // Close the file.
 
 private:
   File file;
+  bool file_opened;
+  elapsedMillis timer;
+  String file_name;
 };
 
 #endif
