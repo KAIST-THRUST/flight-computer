@@ -9,6 +9,10 @@ void ADCSensor::begin() {
 }
 
 void ADCSensor::update() {
+  if (last_update_time < 1000 / ADC_SAMPLING_RATE) {
+    return;
+  }
+  last_update_time = last_update_time - 1000 / ADC_SAMPLING_RATE;
   int16_t pressure_adc = ads.readADC_SingleEnded(ADC_PRESSURE_PIN);
   int16_t voltage_adc = ads.readADC_SingleEnded(ADC_VOLTAGE_PIN);
   sensorData.values[PRESSURE] =
@@ -17,7 +21,6 @@ void ADCSensor::update() {
 }
 
 String ADCSensor::toString() const {
-  return "[Voltmeter] Pressure: " +
-         String(sensorData.values[PRESSURE], 7) +
+  return "[ADC] Pressure: " + String(sensorData.values[PRESSURE], 7) +
          ", Voltage: " + String(sensorData.values[VOLTAGE], 7);
 }

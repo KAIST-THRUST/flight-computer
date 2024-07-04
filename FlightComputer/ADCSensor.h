@@ -25,6 +25,7 @@ public:
 
 private:
   Adafruit_ADS1115 ads;
+  elapsedMillis last_update_time;
 };
 
 #endif
