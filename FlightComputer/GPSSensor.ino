@@ -24,11 +24,6 @@ void GPSSensor::update() {
   static unsigned long last_update_time = 0;
   unsigned long current_time = millis();
 
-  if (current_time - last_update_time < (1000 / GPS_SAMPLING_RATE))
-    return;
-
-  last_update_time = current_time;
-
   char c = GPS.read(); // For debugging purposes.
 
   // if you want to debug, this is a good time to do it!
@@ -41,6 +36,10 @@ void GPSSensor::update() {
       /* If parse fails, return. */
       return;
   }
+
+  if (current_time - last_update_time < (1000 / GPS_SAMPLING_RATE))
+    return;  
+  last_update_time = current_time;
 
   if (GPS.fix) {
     /* Direction of latitude and longitude in sign. */

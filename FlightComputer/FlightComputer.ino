@@ -45,10 +45,11 @@ void loop() {
   /*-----------------------------------------------------------------*/
   /* Sensor update part. */
   current_time = millis();
+  gps_sensor.update();
+  
   if (current_time - last_update_time >= (1000 / SAMPLING_RATE)) {
     last_update_time = current_time;
     imu_sensor.update();
-    gps_sensor.update();
     barometer_sensor.update();
     Serial.println("------------------------------------------------");
     Serial.print("Time: ");
