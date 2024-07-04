@@ -14,7 +14,7 @@ void SensorSet::addSensor(BarometerSensor *sensor) {
   sensors[BAROMETER] = sensor;
 }
 
-void SensorSet::addSensor(VoltmeterSensor *sensor) {
+void SensorSet::addSensor(ADCSensor *sensor) {
   sensors[VOLTMETER] = sensor;
 }
 
@@ -45,7 +45,6 @@ float SensorSet::getValue(
   return sensors[BAROMETER]->getSensorData().values[index];
 }
 
-float SensorSet::getValue(
-    enum VoltmeterSensor::VoltmeterDataIndex index) const {
+float SensorSet::getValue(enum ADCSensor::ADCDataIndex index) const {
   return sensors[VOLTMETER]->getSensorData().values[index];
 }

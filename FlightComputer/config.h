@@ -31,6 +31,11 @@
 #define GPS_SERIAL Serial2  // Serial name connected to GPS.
 #define GPS_SAMPLING_RATE 1 // GPS sampling rate, in Hz.
 
+/* ADC (ADS1125) configurations. */
+#define ADC_WIRE Wire2     // Wire name connected to ADS1125.
+#define ADC_PRESSURE_PIN 2 // Pressure sensor pin number.
+#define ADC_VOLTAGE_PIN 3  // Voltage sensor pin number.
+
 /* SD card configurations. */
 #define FILE_NAME "data.txt" // File name to store sensor data.
 
