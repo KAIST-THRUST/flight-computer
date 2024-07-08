@@ -30,14 +30,16 @@ void BarometerSensor::update() {
   sensorData.values[TEMPERATURE] = temp_event.temperature;
   sensorData.values[ALTITUDE] = bmp.readAltitude(SEA_LEVEL_HPA);
   if (millis() <= 60 * 1000) {
-    altitude_avg.addValue(sensorData.values[ALTITUDE]);
-    sensorData.values[ALTITUDE_AVG] = altitude_avg.getAverage();
+    pressure_avg.addValue(sensorData.values[PRESSURE]);
+    sensorData.values[PRESSURE_AVG] = pressure_avg.getAverage();
   }
 }
 
 String BarometerSensor::toString() const {
   return "[Barometer] Pressure: " +
          String(sensorData.values[PRESSURE], 7) +
+         ", Average Pressure: " +
+         String(sensorData.values[PRESSURE_AVG], 7) +
          ", Temperature: " + String(sensorData.values[TEMPERATURE], 7) +
          ", Altitude: " + String(sensorData.values[ALTITUDE], 7);
 }

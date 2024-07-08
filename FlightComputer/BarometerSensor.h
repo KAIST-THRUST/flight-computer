@@ -19,7 +19,7 @@ public:
     PRESSURE,     // in hPa
     TEMPERATURE,  // in Celsius
     ALTITUDE,     // in meters
-    ALTITUDE_AVG, // in meters
+    PRESSURE_AVG, // in hPa
     DATA_COUNT
   };
   BarometerSensor();
@@ -31,7 +31,7 @@ private:
   Adafruit_BMP280 bmp;
   Adafruit_Sensor *bmp_pressure;
   Adafruit_Sensor *bmp_temp;
-  AverageSensorValue altitude_avg;
+  AverageSensorValue pressure_avg;
 };
 
 #endif
