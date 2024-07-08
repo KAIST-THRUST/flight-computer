@@ -34,7 +34,7 @@ public:
 
   void addValue(float value) {
     /* Calculate the new average. */
-    avg = avg * (count / (count + 1.0)) + value / (count + 1.0);
+    avg = (avg * count / (count + 1)) + value / (count + 1);
     count++;
   }
 
