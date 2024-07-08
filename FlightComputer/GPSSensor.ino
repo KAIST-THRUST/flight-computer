@@ -38,7 +38,7 @@ void GPSSensor::update() {
   }
 
   if (current_time - last_update_time < (1000 / GPS_SAMPLING_RATE))
-    return;  
+    return;
   last_update_time = current_time;
 
   if (GPS.fix) {
@@ -61,6 +61,8 @@ String GPSSensor::toString() const {
   return "[GPS] Latitude: " + String(sensorData.values[LATITUDE], 7) +
          ", Longitude: " + String(sensorData.values[LONGITUDE], 7) +
          ", Altitude: " + String(sensorData.values[ALTITUDE], 7) +
+         ", Average Altitude: " +
+         String(sensorData.values[ALTITUDE_AVG], 7) +
          ", Speed: " + String(sensorData.values[SPEED], 7);
 }
 
