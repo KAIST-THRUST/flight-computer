@@ -35,7 +35,7 @@
 #define ADC_WIRE Wire2       // Wire name connected to ADS1125.
 #define ADC_PRESSURE_PIN 2   // Pressure sensor pin number.
 #define ADC_VOLTAGE_PIN 3    // Voltage sensor pin number.
-#define ADC_SAMPLING_RATE 10 // GPS sampling rate, in Hz.
+#define ADC_SAMPLING_RATE 10 // ADC sampling rate, in Hz.
 
 /* SD card configurations. */
 #define FILE_NAME "data.txt" // File name to store sensor data.
