@@ -21,7 +21,7 @@ static ADCSensor adc_sensor;
 /* SD card manager. */
 static SDManager sd_manager;
 
-/* Time variables for non-blocking delay(). */
+/* Time variables for non-blocking delay. */
 static unsigned long last_update_time = 0;
 static unsigned long current_time;
 
