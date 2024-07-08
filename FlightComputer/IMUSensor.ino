@@ -6,7 +6,7 @@ IMUSensor::IMUSensor() {
 }
 
 void IMUSensor::begin() {
-  if (!bno.begin()) {
+  if (!bno.begin(OPERATION_MODE_NDOF)) {
     printErrorMessageToSerial(
         "no BNO055 detected ... Check your wiring or I2C ADDR!");
   }
@@ -41,11 +41,12 @@ String IMUSensor::toString() const {
          String(sensorData.values[ACC_X], 7) +
          ", y:" + String(sensorData.values[ACC_Y], 7) +
          ", z:" + String(sensorData.values[ACC_Z], 7) + "), " +
-         "Angular velocity: (x:" +
+         "\n      Angular velocity: (x:" +
          String(sensorData.values[ANG_VEL_X], 7) +
          ", y:" + String(sensorData.values[ANG_VEL_Y], 7) +
          ", z:" + String(sensorData.values[ANG_VEL_Z], 7) + "), " +
-         "Quaternion: (x:" + String(sensorData.values[QUAT_X], 7) +
+         "\n      Quaternion: (x:" +
+         String(sensorData.values[QUAT_X], 7) +
          ", y:" + String(sensorData.values[QUAT_Y], 7) +
          ", z:" + String(sensorData.values[QUAT_Z], 7) +
          ", w:" + String(sensorData.values[QUAT_W], 7) + ")";
