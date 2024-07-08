@@ -10,6 +10,8 @@
 #include "config.h"
 #include "util.h"
 #include <Adafruit_ADS1X15.h>
+#include <SPI.h>
+#include <Wire.h>
 
 class ADCSensor : public Sensor {
 public:

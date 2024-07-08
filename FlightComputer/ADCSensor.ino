@@ -6,6 +6,8 @@ void ADCSensor::begin() {
   if (!ads.begin(ADS1X15_ADDRESS, &ADC_WIRE)) {
     printErrorMessageToSerial("ADS1115 not found!");
   }
+  ads.setGain(GAIN_TWOTHIRDS);
+  ads.setDataRate(RATE_ADS1115_860SPS);
 }
 
 void ADCSensor::update() {
