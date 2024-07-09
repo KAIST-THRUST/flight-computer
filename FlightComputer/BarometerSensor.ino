@@ -3,7 +3,7 @@
 BarometerSensor::BarometerSensor()
     : bmp(&BAROMETER_WIRE), bmp_pressure(bmp.getPressureSensor()),
       bmp_temp(bmp.getTemperatureSensor()) {
-  sensorData.data_count = DATA_COUNT;
+  sensor_data.data_count = DATA_COUNT;
 }
 
 void BarometerSensor::begin() {
@@ -26,20 +26,20 @@ void BarometerSensor::update() {
   sensors_event_t temp_event, pressure_event;
   bmp_temp->getEvent(&temp_event);
   bmp_pressure->getEvent(&pressure_event);
-  sensorData.values[PRESSURE] = pressure_event.pressure;
-  sensorData.values[TEMPERATURE] = temp_event.temperature;
-  sensorData.values[ALTITUDE] = bmp.readAltitude(SEA_LEVEL_HPA);
+  sensor_data.values[PRESSURE] = pressure_event.pressure;
+  sensor_data.values[TEMPERATURE] = temp_event.temperature;
+  sensor_data.values[ALTITUDE] = bmp.readAltitude(SEA_LEVEL_HPA);
   if (millis() <= 60 * 1000) {
-    pressure_avg.addValue(sensorData.values[PRESSURE]);
-    sensorData.values[PRESSURE_AVG] = pressure_avg.getAverage();
+    pressure_avg.addValue(sensor_data.values[PRESSURE]);
+    sensor_data.values[PRESSURE_AVG] = pressure_avg.getAverage();
   }
 }
 
 String BarometerSensor::toString() const {
   return "[Barometer] Pressure: " +
-         String(sensorData.values[PRESSURE], 7) +
+         String(sensor_data.values[PRESSURE], 7) +
          ", Average Pressure: " +
-         String(sensorData.values[PRESSURE_AVG], 7) +
-         ", Temperature: " + String(sensorData.values[TEMPERATURE], 7) +
-         ", Altitude: " + String(sensorData.values[ALTITUDE], 7);
+         String(sensor_data.values[PRESSURE_AVG], 7) +
+         ", Temperature: " + String(sensor_data.values[TEMPERATURE], 7) +
+         ", Altitude: " + String(sensor_data.values[ALTITUDE], 7);
 }

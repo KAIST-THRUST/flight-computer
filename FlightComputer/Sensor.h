@@ -16,16 +16,16 @@ struct SensorData {
 class Sensor {
 public:
   virtual void begin() = 0;    // Begin method. Place it in setup().
-  virtual void update() = 0;   // Update the sensorData attribute.
+  virtual void update() = 0;   // Update the sensor_data attribute.
   virtual ~Sensor() = default; // Default destructor.
   virtual String toString() const = 0; // Convert sensor data to string.
 
-  const SensorData &getSensorData() const { // Getter for sensorData.
-    return sensorData;
+  const SensorData &getSensorData() const { // Getter for sensor_data.
+    return sensor_data;
   }
 
 protected:
-  SensorData sensorData; // Attribute holding sensor readings.
+  SensorData sensor_data; // Attribute holding sensor readings.
 };
 
 class AverageSensorValue {

@@ -1,7 +1,7 @@
 #include "GPSSensor.h"
 
 GPSSensor::GPSSensor() : GPS(&GPS_SERIAL) {
-  sensorData.data_count = DATA_COUNT;
+  sensor_data.data_count = DATA_COUNT;
 }
 
 void GPSSensor::begin() {
@@ -46,34 +46,34 @@ void GPSSensor::update() {
     int lat_dir = (GPS.lat == 'N') ? 1 : -1;
     int lon_dir = (GPS.lon == 'E') ? 1 : -1;
 
-    sensorData.values[LATITUDE] = GPS.latitude * lat_dir;
-    sensorData.values[LONGITUDE] = GPS.longitude * lon_dir;
-    sensorData.values[ALTITUDE] = GPS.altitude;
-    sensorData.values[SPEED] = GPS.speed * 0.51444; // Convert to m/s.
+    sensor_data.values[LATITUDE] = GPS.latitude * lat_dir;
+    sensor_data.values[LONGITUDE] = GPS.longitude * lon_dir;
+    sensor_data.values[ALTITUDE] = GPS.altitude;
+    sensor_data.values[SPEED] = GPS.speed * 0.51444; // Convert to m/s.
     if (millis() <= 60 * 1000) {
-      altitude_avg.addValue(sensorData.values[ALTITUDE]);
-      sensorData.values[ALTITUDE_AVG] = altitude_avg.getAverage();
+      altitude_avg.addValue(sensor_data.values[ALTITUDE]);
+      sensor_data.values[ALTITUDE_AVG] = altitude_avg.getAverage();
     }
   }
 }
 
 String GPSSensor::toString() const {
-  return "[GPS] Latitude: " + String(sensorData.values[LATITUDE], 7) +
-         ", Longitude: " + String(sensorData.values[LONGITUDE], 7) +
-         ", Altitude: " + String(sensorData.values[ALTITUDE], 7) +
+  return "[GPS] Latitude: " + String(sensor_data.values[LATITUDE], 7) +
+         ", Longitude: " + String(sensor_data.values[LONGITUDE], 7) +
+         ", Altitude: " + String(sensor_data.values[ALTITUDE], 7) +
          ", Average Altitude: " +
-         String(sensorData.values[ALTITUDE_AVG], 7) +
-         ", Speed: " + String(sensorData.values[SPEED], 7);
+         String(sensor_data.values[ALTITUDE_AVG], 7) +
+         ", Speed: " + String(sensor_data.values[SPEED], 7);
 }
 
 float GPSSensor::getLatitude() const {
-  return sensorData.values[LATITUDE];
+  return sensor_data.values[LATITUDE];
 }
 
 float GPSSensor::getLongitude() const {
-  return sensorData.values[LONGITUDE];
+  return sensor_data.values[LONGITUDE];
 }
 
 float GPSSensor::getAltitude() const {
-  return sensorData.values[ALTITUDE];
+  return sensor_data.values[ALTITUDE];
 }
