@@ -38,7 +38,7 @@
 #define ADC_SAMPLING_RATE 10 // ADC sampling rate, in Hz.
 
 /* SD card configurations. */
-#define FILE_NAME "data.txt" // File name to store sensor data.
+#define FILE_NAME "sensor_data.txt" // File name to store sensor data.
 
 /*-------------------------------------------------------------------*/
 
