@@ -17,7 +17,7 @@ class ADCSensor : public Sensor {
 public:
   enum ADCDataIndex {
     VOLTAGE,  // in V
-    PRESSURE, // in psig
+    PRESSURE, // in barg
     DATA_COUNT
   };
   ADCSensor();

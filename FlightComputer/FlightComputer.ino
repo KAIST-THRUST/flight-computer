@@ -4,10 +4,21 @@
  */
 
 #include "NonBlockingServo.h"
+#include "RealTimeClock.h"
 #include "SDManager.h"
 #include "SensorSet.h"
 #include "config.h"
 #include "util.h"
+
+enum class state {
+  ST_STAND_BY,
+  ST_BURN,
+  ST_COAST,
+  ST_DESCENT,
+  ST_LANDED
+};
+
+enum state current_state = state::ST_COAST;
 
 /* Servo motor. */
 static NonBlockingServo serv;
@@ -24,8 +35,10 @@ static SDManager sd_manager;
 /* Time variables for non-blocking delay. */
 static unsigned long last_update_time = 0;
 static unsigned long current_time;
+static RealTimeClock rtc;
 
 void setup() {
+  rtc.begin();
   Serial.begin(BAUD_RATE);
   Serial.println("Hello World!"); // serial monitor test.
   serv.begin();
@@ -34,11 +47,31 @@ void setup() {
   barometer_sensor.begin();
   adc_sensor.begin();
   delay(1000); // Wait for sensors to initialize.
-  sd_manager.begin();
-  sd_manager.write("Test string.");
 }
 
 void loop() {
+  // switch (current_state) {
+  // case state::ST_STAND_BY:
+  //   // Stand by state.
+  //   break;
+
+  // case state::ST_BURN:
+  //   // Burn state.
+  //   break;
+
+  // case state::ST_COAST:
+  //   // Coast state.
+  //   break;
+
+  // case state::ST_DESCENT:
+  //   // Descent state.
+  //   break;
+
+  // case state::ST_LANDED:
+  //   // Landed state.
+  //   break;
+  // }
+
   /*-----------------------------------------------------------------*/
   /* Servo part. */
   updateServoFromSerial(serv);
@@ -57,6 +90,7 @@ void loop() {
     Serial.println("------------------------------------------------");
     Serial.print("Time: ");
     Serial.println(current_time);
+    Serial.println(rtc.getTimeData());
     printSensorDataToSerial(imu_sensor);
     printSensorDataToSerial(gps_sensor);
     printSensorDataToSerial(barometer_sensor);

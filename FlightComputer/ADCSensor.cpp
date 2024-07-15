@@ -18,7 +18,7 @@ void ADCSensor::update() {
   int16_t pressure_adc = ads.readADC_SingleEnded(ADC_PRESSURE_PIN);
   int16_t voltage_adc = ads.readADC_SingleEnded(ADC_VOLTAGE_PIN);
   sensor_data.values[PRESSURE] =
-      map(ads.computeVolts(pressure_adc), 1, 5, 0, 1000);
+      map(ads.computeVolts(pressure_adc), 1, 5, 0, 68.9476);
   sensor_data.values[VOLTAGE] = ads.computeVolts(voltage_adc);
 }
 

@@ -6,6 +6,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <Arduino.h>
+
 /*-------------------------------------------------------------------*/
 /* Define or modify the configurations here if you want. */
 
