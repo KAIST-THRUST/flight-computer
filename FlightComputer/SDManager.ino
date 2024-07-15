@@ -1,9 +1,9 @@
 #include "SDManager.h"
 
-SDManager::SDManager(String file_name)
-    : file_opened(false), file_name(file_name) {}
+SDManager::SDManager() : file_opened(false), file_name(FILE_NAME) {}
 
-void SDManager::begin() {
+void SDManager::begin(String file_name) {
+  this->file_name = file_name;
   if (!SD.begin(BUILTIN_SDCARD)) {
     printErrorMessageToSerial("SD card initialization failed!");
     return;
