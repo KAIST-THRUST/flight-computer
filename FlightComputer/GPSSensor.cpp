@@ -49,10 +49,18 @@ void GPSSensor::update() {
     sensor_data.values[LATITUDE] = GPS.latitude * lat_dir;
     sensor_data.values[LONGITUDE] = GPS.longitude * lon_dir;
     sensor_data.values[ALTITUDE] = GPS.altitude;
-    sensor_data.values[SPEED] = GPS.speed * 0.51444; // Convert to m/s.
-    if (millis() <= 60 * 1000) {
-      altitude_avg.addValue(sensor_data.values[ALTITUDE]);
-      sensor_data.values[ALTITUDE_AVG] = altitude_avg.getAverage();
+    sensor_data.values[GEOID_HEIGHT] = GPS.geoidheight;
+    if (millis() <= 180 * 1000 &&
+        tu_1_current_state == state::ST_STAND_BY) {
+      altitude_ls.addValue(sensor_data.values[ALTITUDE]);
+      sensor_data.values[ALTITUDE_LS] = altitude_ls.getAverage();
+      latitude_ls.addValue(sensor_data.values[LATITUDE]);
+      sensor_data.values[LATITUDE_LS] = latitude_ls.getAverage();
+      longitude_ls.addValue(sensor_data.values[LONGITUDE]);
+      sensor_data.values[LONGITUDE_LS] = longitude_ls.getAverage();
+      geoid_height_ls.addValue(sensor_data.values[GEOID_HEIGHT]);
+      sensor_data.values[GEOID_HEIGHT_LS] =
+          geoid_height_ls.getAverage();
     }
   }
 }
@@ -62,8 +70,7 @@ String GPSSensor::toString() const {
          ", Longitude: " + String(sensor_data.values[LONGITUDE], 7) +
          ", Altitude: " + String(sensor_data.values[ALTITUDE], 7) +
          ", Average Altitude: " +
-         String(sensor_data.values[ALTITUDE_AVG], 7) +
-         ", Speed: " + String(sensor_data.values[SPEED], 7);
+         String(sensor_data.values[ALTITUDE_LS], 7);
 }
 
 float GPSSensor::getLatitude() const {
