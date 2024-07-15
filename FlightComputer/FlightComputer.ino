@@ -7,18 +7,7 @@
 #include "RealTimeClock.h"
 #include "SDManager.h"
 #include "SensorSet.h"
-#include "config.h"
 #include "util.h"
-
-enum class state {
-  ST_STAND_BY,
-  ST_BURN,
-  ST_COAST,
-  ST_DESCENT,
-  ST_LANDED
-};
-
-enum state current_state = state::ST_COAST;
 
 /* Servo motor. */
 static NonBlockingServo serv;
@@ -50,7 +39,7 @@ void setup() {
 }
 
 void loop() {
-  // switch (current_state) {
+  // switch (tu_1_current_state) {
   // case state::ST_STAND_BY:
   //   // Stand by state.
   //   break;

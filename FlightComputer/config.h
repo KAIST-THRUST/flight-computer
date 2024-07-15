@@ -8,6 +8,17 @@
 
 #include <Arduino.h>
 
+/* Define the state of the rocket. */
+enum class state {
+  ST_STAND_BY,
+  ST_BURN,
+  ST_COAST,
+  ST_DESCENT,
+  ST_LANDED
+};
+
+extern enum state tu_1_current_state;
+
 /*-------------------------------------------------------------------*/
 /* Define or modify the configurations here if you want. */
 
