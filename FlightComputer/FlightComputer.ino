@@ -36,6 +36,8 @@ void setup() {
   barometer_sensor.begin();
   adc_sensor.begin();
   delay(1000); // Wait for sensors to initialize.
+  sd_manager.begin(rtc.getTimeData());
+  sd_manager.write("Hello World!"); // SD card test.
 }
 
 void loop() {
