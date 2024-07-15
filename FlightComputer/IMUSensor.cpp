@@ -1,7 +1,6 @@
 #include "IMUSensor.h"
 
-IMUSensor::IMUSensor() {
-  bno = Adafruit_BNO055(55, IMU_I2C_ADDRESS, &IMU_WIRE);
+IMUSensor::IMUSensor() : bno(55, IMU_I2C_ADDRESS, &IMU_WIRE) {
   sensor_data.data_count = DATA_COUNT;
 }
 
@@ -15,8 +14,7 @@ void IMUSensor::begin() {
 void IMUSensor::update() {
   sensors_event_t angVelocityData, accelerometerData;
   bno.getEvent(&angVelocityData, Adafruit_BNO055::VECTOR_GYROSCOPE);
-  bno.getEvent(&accelerometerData,
-               Adafruit_BNO055::VECTOR_LINEARACCEL);
+  bno.getEvent(&accelerometerData, Adafruit_BNO055::VECTOR_LINEARACCEL);
 
   /* Get acceleration data */
   sensor_data.values[ACC_X] = accelerometerData.acceleration.x;
