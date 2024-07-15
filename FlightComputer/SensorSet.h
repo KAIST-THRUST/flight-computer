@@ -13,6 +13,19 @@
 #include "Sensor.h"
 #include "config.h"
 
+struct SensorDataCollection {
+  int current_time;
+  float sensor_data[GPSSensor::DATA_COUNT + IMUSensor::DATA_COUNT +
+                    BarometerSensor::DATA_COUNT +
+                    ADCSensor::DATA_COUNT]; // Sensor data array.
+  float *gps_data = sensor_data;
+  float *imu_data = sensor_data + GPSSensor::DATA_COUNT;
+  float *barometer_data =
+      sensor_data + GPSSensor::DATA_COUNT + IMUSensor::DATA_COUNT;
+  float *adc_data = sensor_data + GPSSensor::DATA_COUNT +
+                    IMUSensor::DATA_COUNT + BarometerSensor::DATA_COUNT;
+};
+
 class SensorSet {
 public:
   enum SensorType {
@@ -40,8 +53,13 @@ public:
   float getValue(enum BarometerSensor::BarometerDataIndex index) const;
   float getValue(enum ADCSensor::ADCDataIndex index) const;
 
+  const SensorDataCollection &getSensorDataCollection() const {
+    return sensor_data_collection;
+  }
+
 private:
   Sensor *sensors[SENSOR_COUNT];
+  SensorDataCollection sensor_data_collection;
 };
 
 #endif
