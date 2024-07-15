@@ -16,7 +16,7 @@ void IMUSensor::update() {
   sensors_event_t angVelocityData, accelerometerData;
   bno.getEvent(&angVelocityData, Adafruit_BNO055::VECTOR_GYROSCOPE);
   bno.getEvent(&accelerometerData,
-               Adafruit_BNO055::VECTOR_ACCELEROMETER);
+               Adafruit_BNO055::VECTOR_LINEARACCEL);
 
   /* Get acceleration data */
   sensor_data.values[ACC_X] = accelerometerData.acceleration.x;
