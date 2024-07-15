@@ -23,7 +23,6 @@
 /* Barometer sensor(BMP280) configurations. */
 #define BAROMETER_I2C_ADDRESS 0x76 // I2C address of BMP280 sensor.
 #define BAROMETER_WIRE Wire1       // Wire name connected to BMP280.
-#define SEA_LEVEL_HPA 1013.25      // Sea level pressure in hPa.
 
 /* IMU sensor(BNO055) configurations. */
 #define IMU_I2C_ADDRESS 0x28 // I2C address of BNO055 sensor.
