@@ -26,6 +26,7 @@ extern enum RocketState rocket_current_state;
 #define BAUD_RATE 115200  // Baud rate of the main serial port.
 #define MAX_DATA_COUNT 10 // Maximum number of sensor output data.
 #define SAMPLING_RATE 100 // Base sampling rate, in Hz.
+#define INITIAL_ROCKET_STATE RocketState::ST_STAND_BY // Initial state.
 
 /* Servo motor configurations. */
 #define SERVO_PIN 2        // Servo motor pin number.
