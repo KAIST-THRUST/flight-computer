@@ -18,6 +18,8 @@ static GPSSensor gps_sensor;
 static BarometerSensor barometer_sensor;
 static ADCSensor adc_sensor;
 
+static SensorDataCollection sensor_data_collection;
+
 /* SD card manager. */
 static SDManager sd_manager;
 
@@ -31,10 +33,10 @@ void setup() {
   Serial.begin(BAUD_RATE);
   Serial.println("Hello World!"); // serial monitor test.
   serv.begin();
-  imu_sensor.begin();
-  gps_sensor.begin();
-  barometer_sensor.begin();
-  adc_sensor.begin();
+  imu_sensor.begin(sensor_data_collection.imu_data);
+  gps_sensor.begin(sensor_data_collection.gps_data);
+  barometer_sensor.begin(sensor_data_collection.barometer_data);
+  adc_sensor.begin(sensor_data_collection.adc_data);
   delay(1000); // Wait for sensors to initialize.
   sd_manager.begin(rtc.getTimeData());
   sd_manager.write("Hello World!"); // SD card test.

@@ -21,7 +21,7 @@ void SensorSet::addSensor(ADCSensor *sensor) {
 void SensorSet::beginAll() {
   /* Begin all sensors. */
   for (Sensor *sensor : sensors) {
-    sensor->begin();
+    sensor->begin(nullptr);
   }
 }
 

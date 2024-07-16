@@ -23,7 +23,7 @@ public:
     DATA_COUNT
   };
   BarometerSensor();
-  void begin() override;
+  void begin(float *ptr) override;
   void update() override;
   String toString() const override;
 

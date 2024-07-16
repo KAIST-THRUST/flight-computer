@@ -4,7 +4,8 @@ GPSSensor::GPSSensor() : GPS(&GPS_SERIAL) {
   sensor_data.data_count = DATA_COUNT;
 }
 
-void GPSSensor::begin() {
+void GPSSensor::begin(float *ptr) {
+  data_ptr = ptr;
   GPS.begin(9600);
 
   /* Turn on RMC and GGA including altitude. */
@@ -46,41 +47,33 @@ void GPSSensor::update() {
     int lat_dir = (GPS.lat == 'N') ? 1 : -1;
     int lon_dir = (GPS.lon == 'E') ? 1 : -1;
 
-    sensor_data.values[LATITUDE] = GPS.latitude * lat_dir;
-    sensor_data.values[LONGITUDE] = GPS.longitude * lon_dir;
-    sensor_data.values[ALTITUDE] = GPS.altitude;
-    sensor_data.values[GEOID_HEIGHT] = GPS.geoidheight;
+    data_ptr[LATITUDE] = GPS.latitude * lat_dir;
+    data_ptr[LONGITUDE] = GPS.longitude * lon_dir;
+    data_ptr[ALTITUDE] = GPS.altitude;
+    data_ptr[GEOID_HEIGHT] = GPS.geoidheight;
     if (millis() <= 180 * 1000 &&
         rocket_current_state == RocketState::ST_STAND_BY) {
-      altitude_ls.addValue(sensor_data.values[ALTITUDE]);
-      sensor_data.values[ALTITUDE_LS] = altitude_ls.getAverage();
-      latitude_ls.addValue(sensor_data.values[LATITUDE]);
-      sensor_data.values[LATITUDE_LS] = latitude_ls.getAverage();
-      longitude_ls.addValue(sensor_data.values[LONGITUDE]);
-      sensor_data.values[LONGITUDE_LS] = longitude_ls.getAverage();
-      geoid_height_ls.addValue(sensor_data.values[GEOID_HEIGHT]);
-      sensor_data.values[GEOID_HEIGHT_LS] =
-          geoid_height_ls.getAverage();
+      altitude_ls.addValue(data_ptr[ALTITUDE]);
+      data_ptr[ALTITUDE_LS] = altitude_ls.getAverage();
+      latitude_ls.addValue(data_ptr[LATITUDE]);
+      data_ptr[LATITUDE_LS] = latitude_ls.getAverage();
+      longitude_ls.addValue(data_ptr[LONGITUDE]);
+      data_ptr[LONGITUDE_LS] = longitude_ls.getAverage();
+      geoid_height_ls.addValue(data_ptr[GEOID_HEIGHT]);
+      data_ptr[GEOID_HEIGHT_LS] = geoid_height_ls.getAverage();
     }
   }
 }
 
 String GPSSensor::toString() const {
-  return "[GPS] Latitude: " + String(sensor_data.values[LATITUDE], 7) +
-         ", Longitude: " + String(sensor_data.values[LONGITUDE], 7) +
-         ", Altitude: " + String(sensor_data.values[ALTITUDE], 7) +
-         ", Average Altitude: " +
-         String(sensor_data.values[ALTITUDE_LS], 7);
+  return "[GPS] Latitude: " + String(data_ptr[LATITUDE], 7) +
+         ", Longitude: " + String(data_ptr[LONGITUDE], 7) +
+         ", Altitude: " + String(data_ptr[ALTITUDE], 7) +
+         ", Average Altitude: " + String(data_ptr[ALTITUDE_LS], 7);
 }
 
-float GPSSensor::getLatitude() const {
-  return sensor_data.values[LATITUDE];
-}
+float GPSSensor::getLatitude() const { return data_ptr[LATITUDE]; }
 
-float GPSSensor::getLongitude() const {
-  return sensor_data.values[LONGITUDE];
-}
+float GPSSensor::getLongitude() const { return data_ptr[LONGITUDE]; }
 
-float GPSSensor::getAltitude() const {
-  return sensor_data.values[ALTITUDE];
-}
+float GPSSensor::getAltitude() const { return data_ptr[ALTITUDE]; }

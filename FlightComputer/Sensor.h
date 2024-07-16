@@ -15,7 +15,7 @@ struct SensorData {
 
 class Sensor {
 public:
-  virtual void begin() = 0;    // Begin method. Place it in setup().
+  virtual void begin(float *ptr) = 0; // Begin method.
   virtual void update() = 0;   // Update the sensor_data attribute.
   virtual ~Sensor() = default; // Default destructor.
   virtual String toString() const = 0; // Convert sensor data to string.
@@ -26,6 +26,7 @@ public:
 
 protected:
   SensorData sensor_data; // Attribute holding sensor readings.
+  float *data_ptr;        // Pointer to sensor_data.values.
 };
 
 class AverageSensorValue {
