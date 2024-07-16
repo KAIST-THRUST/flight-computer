@@ -18,7 +18,7 @@ struct SensorDataCollection {
       GPSSensor::DATA_COUNT + IMUSensor::DATA_COUNT +
       BarometerSensor::DATA_COUNT + ADCSensor::DATA_COUNT;
 
-  int current_time = 0;
+  uint32_t current_time = 0;
   float sensor_data[TOTAL_DATA_COUNT] = {0}; // All set to zero.
   float *gps_data;
   float *imu_data;
