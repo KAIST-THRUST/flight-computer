@@ -14,16 +14,25 @@
 #include "config.h"
 
 struct SensorDataCollection {
-  int current_time;
-  float sensor_data[GPSSensor::DATA_COUNT + IMUSensor::DATA_COUNT +
-                    BarometerSensor::DATA_COUNT +
-                    ADCSensor::DATA_COUNT]; // Sensor data array.
-  float *gps_data = sensor_data;
-  float *imu_data = sensor_data + GPSSensor::DATA_COUNT;
-  float *barometer_data =
-      sensor_data + GPSSensor::DATA_COUNT + IMUSensor::DATA_COUNT;
-  float *adc_data = sensor_data + GPSSensor::DATA_COUNT +
-                    IMUSensor::DATA_COUNT + BarometerSensor::DATA_COUNT;
+  static constexpr int TOTAL_DATA_COUNT =
+      GPSSensor::DATA_COUNT + IMUSensor::DATA_COUNT +
+      BarometerSensor::DATA_COUNT + ADCSensor::DATA_COUNT;
+
+  int current_time = 0;
+  float sensor_data[TOTAL_DATA_COUNT] = {0}; // All set to zero.
+  float *gps_data;
+  float *imu_data;
+  float *barometer_data;
+  float *adc_data;
+
+  /* Constructor to initialize pointers. */
+  SensorDataCollection()
+      : gps_data(sensor_data),
+        imu_data(sensor_data + GPSSensor::DATA_COUNT),
+        barometer_data(sensor_data + GPSSensor::DATA_COUNT +
+                       IMUSensor::DATA_COUNT),
+        adc_data(sensor_data + GPSSensor::DATA_COUNT +
+                 IMUSensor::DATA_COUNT + BarometerSensor::DATA_COUNT) {}
 };
 
 class SensorSet {
