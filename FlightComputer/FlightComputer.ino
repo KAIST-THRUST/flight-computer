@@ -66,7 +66,6 @@ void loop() {
       adc_sensor.update();
 
       /* Logging sensor data to Serial. */
-      Serial.println("----------------------------------------------");
       Serial.print("Time: ");
       Serial.println(current_time);
       Serial.println(rtc.getTimeData());
@@ -74,7 +73,7 @@ void loop() {
       printSensorDataToSerial(gps_sensor);
       printSensorDataToSerial(barometer_sensor);
       printSensorDataToSerial(adc_sensor);
-      Serial.println("----------------------------------------------");
+      Serial.println("");
 
       /* Writing sensor data to SD card. */
       sd_manager.write(rtc.getTimeData());
@@ -82,6 +81,7 @@ void loop() {
       sd_manager.write(gps_sensor.toString());
       sd_manager.write(barometer_sensor.toString());
       sd_manager.write(adc_sensor.toString());
+      sd_manager.write("");
     }
     break;
 
