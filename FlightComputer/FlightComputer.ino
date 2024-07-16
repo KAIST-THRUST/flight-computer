@@ -41,25 +41,25 @@ void setup() {
 }
 
 void loop() {
-  // switch (tu_1_current_state) {
-  // case state::ST_STAND_BY:
-  //   // Stand by state.
+  // switch (rocket_current_state) {
+  // case RocketState::ST_STAND_BY:
+  //   // Stand by RocketState.
   //   break;
 
-  // case state::ST_BURN:
-  //   // Burn state.
+  // case RocketState::ST_BURN:
+  //   // Burn RocketState.
   //   break;
 
-  // case state::ST_COAST:
-  //   // Coast state.
+  // case RocketState::ST_COAST:
+  //   // Coast RocketState.
   //   break;
 
-  // case state::ST_DESCENT:
-  //   // Descent state.
+  // case RocketState::ST_DESCENT:
+  //   // Descent RocketState.
   //   break;
 
-  // case state::ST_LANDED:
-  //   // Landed state.
+  // case RocketState::ST_LANDED:
+  //   // Landed RocketState.
   //   break;
   // }
 

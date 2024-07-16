@@ -51,7 +51,7 @@ void GPSSensor::update() {
     sensor_data.values[ALTITUDE] = GPS.altitude;
     sensor_data.values[GEOID_HEIGHT] = GPS.geoidheight;
     if (millis() <= 180 * 1000 &&
-        tu_1_current_state == state::ST_STAND_BY) {
+        rocket_current_state == RocketState::ST_STAND_BY) {
       altitude_ls.addValue(sensor_data.values[ALTITUDE]);
       sensor_data.values[ALTITUDE_LS] = altitude_ls.getAverage();
       latitude_ls.addValue(sensor_data.values[LATITUDE]);

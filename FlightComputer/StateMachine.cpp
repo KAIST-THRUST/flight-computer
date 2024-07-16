@@ -1,3 +1,3 @@
 #include "config.h"
 
-enum state tu_1_current_state = state::ST_STAND_BY;
+enum RocketState rocket_current_state = RocketState::ST_STAND_BY;
