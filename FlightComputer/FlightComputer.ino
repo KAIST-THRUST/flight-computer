@@ -12,19 +12,13 @@
 /* Servo motor. */
 static NonBlockingServo serv;
 
-/* Sensors to receive data. */
-static IMUSensor imu_sensor;
-static GPSSensor gps_sensor;
-static BarometerSensor barometer_sensor;
-static ADCSensor adc_sensor;
-
-static SensorDataCollection sensor_data_collection;
+/* Sensors set. */
+static SensorSet sensor_set;
 
 /* SD card manager. */
 static SDManager sd_manager;
 
 /* Time variables for non-blocking delay. */
-static uint32_t last_update_time = 0;
 static uint32_t current_time;
 static RealTimeClock rtc;
 
@@ -33,10 +27,7 @@ void setup() {
   Serial.begin(BAUD_RATE);
   Serial.println("Hello World!"); // serial monitor test.
   serv.begin();
-  imu_sensor.begin(sensor_data_collection.imu_data);
-  gps_sensor.begin(sensor_data_collection.gps_data);
-  barometer_sensor.begin(sensor_data_collection.barometer_data);
-  adc_sensor.begin(sensor_data_collection.adc_data);
+  sensor_set.beginAll();
   delay(1000); // Wait for sensors to initialize.
   sd_manager.begin(rtc.getTimeData());
   sd_manager.write("Hello World!"); // SD card test.
@@ -60,29 +51,21 @@ void loop() {
   case RocketState::ST_COAST:
     /* Coast state. */
     current_time = millis();
-    gps_sensor.update(); // Need to be updated every loop.
-    if (current_time - last_update_time >= (1000 / SAMPLING_RATE)) {
-      last_update_time = current_time;
-      imu_sensor.update();
-      barometer_sensor.update();
-      adc_sensor.update();
+    sensor_set.gps_sensor.update(); // Need to be updated every loop.
+    if (current_time - sensor_set.sensor_data_collection.current_time >=
+        (1000 / SAMPLING_RATE)) {
+      /* Update every SAMPLING_RATE Hz. */
+      sensor_set.sensor_data_collection.current_time = current_time;
+      sensor_set.imu_sensor.update();
+      sensor_set.barometer_sensor.update();
+      sensor_set.adc_sensor.update();
 
       /* Logging sensor data to Serial. */
-      Serial.print("Time: ");
-      Serial.println(current_time);
-      Serial.println(rtc.getTimeData());
-      printSensorDataToSerial(imu_sensor);
-      printSensorDataToSerial(gps_sensor);
-      printSensorDataToSerial(barometer_sensor);
-      printSensorDataToSerial(adc_sensor);
+      Serial.println(sensor_set.sensor_data_collection);
       Serial.println("");
 
       /* Writing sensor data to SD card. */
-      sd_manager.write(rtc.getTimeData());
-      sd_manager.write(imu_sensor.toString());
-      sd_manager.write(gps_sensor.toString());
-      sd_manager.write(barometer_sensor.toString());
-      sd_manager.write(adc_sensor.toString());
+      sd_manager.write(sensor_set.sensor_data_collection);
       sd_manager.write("");
     }
     break;
