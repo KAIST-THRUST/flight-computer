@@ -45,6 +45,7 @@ extern enum RocketState rocket_current_state;
 #define GPS_SAMPLING_RATE 1 // GPS sampling rate, in Hz.
 
 /* ADC (ADS1125) configurations. */
+#define ADC_I2C_ADDRESS 0x48 // I2C address of ADS1125.
 #define ADC_WIRE Wire2       // Wire name connected to ADS1125.
 #define ADC_PRESSURE_PIN 2   // Pressure sensor pin number.
 #define ADC_VOLTAGE_PIN 3    // Voltage sensor pin number.

@@ -9,7 +9,7 @@
 #include "Sensor.h"
 #include "config.h"
 #include "util.h"
-#include <Adafruit_ADS1X15.h>
+#include <ADS1X15.h>
 #include <SPI.h>
 #include <Wire.h>
 
@@ -26,7 +26,7 @@ public:
   String toString() const override;
 
 private:
-  Adafruit_ADS1115 ads;
+  ADS1115 ads;
   elapsedMillis last_update_time;
 };
 
