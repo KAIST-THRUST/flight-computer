@@ -28,6 +28,17 @@ extern enum RocketState rocket_current_state;
 #define SAMPLING_RATE 100 // Base sampling rate, in Hz.
 #define INITIAL_ROCKET_STATE RocketState::ST_STAND_BY // Initial state.
 
+/* Navigation configurations. */
+// Gyro Low Pass Filter Config
+#define T_S 0.02     // Nominal sampling rate of gyroscope, in sec
+#define F_CUTOFF 0.5 // Cutoff frequency of low pass filter, in Hz
+
+// TU-1.f Vehicle Config
+#define M_DRY 3.7 // Dry mass of the vehicle after burnout, in kg
+#define C_D0 0.3  // Zero lift drag coefficient of the vehicle
+#define S_REF 0.00849486653 // Ref area for aerodynamic coeff, in m^2
+#define IMU_CG_DIST 0.25    // Distance from cg to imu, in m
+
 /* Servo motor configurations. */
 #define SERVO_PIN 2        // Servo motor pin number.
 #define ROTATION_SPEED 0.2 // Rotation speed in (degree/ms).

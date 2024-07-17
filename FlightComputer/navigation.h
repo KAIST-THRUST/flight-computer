@@ -1,8 +1,8 @@
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 
-#include "vector_util.h"
-#include "navigation_config.h"
+#include "util.h"
+#include "config.h"
 #include "SensorSet.h"
 
 struct ApogeeEstimate {

@@ -3,6 +3,7 @@
  * @brief Main sketch file for execution of the flight computer.
  */
 
+#include "Navigation.h"
 #include "NonBlockingServo.h"
 #include "RealTimeClock.h"
 #include "SDManager.h"
