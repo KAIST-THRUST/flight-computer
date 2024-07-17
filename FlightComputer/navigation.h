@@ -11,6 +11,12 @@ struct ApogeeEstimate {
   float V_apogee; // m/s
 };
 
+struct NavigationData {
+  float pos_ENU[3]; // m, position in ENU
+  float vel_ENU[3]; // m/s, velocity in ENU
+  float alt_ENU; // m, altitude in ENU
+};
+
 class Navigation {
   public:
     void initializeLaunchSiteConfig(float lat_deg, float lon_deg, float alt_orthometric_m, float geoid_separation_m, float atm_pressure_Pa, float atm_temp_K);
@@ -38,7 +44,7 @@ class Navigation {
 
     // private attributes
 
-    /* Below parameters are calculated from the value specified in 'navigation_config.h' file. */
+    /* Below parameters are calculated from the value specified in 'config.h' file. */
     // LPF parameters
     const float tau = 1 / (2 * PI * F_CUTOFF); // sec, time constant of the transfer function of the lpf
     const float alpha = T_S / (tau + T_S); // y(n) = alpha * x(n) + (1-a) * y(n-1)
