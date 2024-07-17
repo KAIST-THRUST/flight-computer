@@ -13,8 +13,11 @@
 /* Servo motor. */
 static NonBlockingServo serv;
 
+/* Sensor data collection. */
+static SensorDataCollection sensor_data_collection;
+
 /* Sensors set. */
-static SensorSet sensor_set;
+static SensorSet sensor_set(sensor_data_collection);
 
 /* SD card manager. */
 static SDManager sd_manager;
@@ -53,20 +56,20 @@ void loop() {
     /* Coast state. */
     current_time = millis();
     sensor_set.gps_sensor.update(); // Need to be updated every loop.
-    if (current_time - sensor_set.sensor_data_collection.current_time >=
+    if (current_time - sensor_data_collection.current_time >=
         (1000 / SAMPLING_RATE)) {
       /* Update every SAMPLING_RATE Hz. */
-      sensor_set.sensor_data_collection.current_time = current_time;
+      sensor_data_collection.current_time = current_time;
       sensor_set.imu_sensor.update();
       sensor_set.barometer_sensor.update();
       sensor_set.adc_sensor.update();
 
       /* Logging sensor data to Serial. */
-      Serial.println(sensor_set.sensor_data_collection);
+      Serial.println(sensor_data_collection);
       Serial.println("");
 
       /* Writing sensor data to SD card. */
-      sd_manager.write(sensor_set.sensor_data_collection);
+      sd_manager.write(sensor_data_collection);
       sd_manager.write("");
     }
     break;

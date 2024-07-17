@@ -67,7 +67,10 @@ struct SensorSet {
   ADCSensor adc_sensor;
 
   /* Sensor data collection. */
-  SensorDataCollection sensor_data_collection;
+  SensorDataCollection &sensor_data_collection;
+
+  SensorSet(SensorDataCollection &sensor_data_collection)
+      : sensor_data_collection(sensor_data_collection) {}
 
   void beginAll() {
     imu_sensor.begin(sensor_data_collection.imu_data);
