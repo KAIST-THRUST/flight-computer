@@ -1,0 +1,115 @@
+clc
+clear
+close all
+
+%% Inputs
+
+r_gps_lla
+v_gps_ecef
+t_gps
+q_ahrs
+w_ahrs
+w_ahrs_prev
+q_ned_bodyinit
+a_ahrs
+t_ahrs
+r_ned_prev
+v_ned_prev
+h_pre
+t_pre
+chamber_pres
+dt
+w_cutoff=2*pi*10;
+
+%% TU-1.f Modeling
+
+m_tu1=4; % (kg)
+C_D=0.3; % C_D of TU-1.f by
+S_ref=1; % 
+d_cg_imu=1; %
+
+
+%% Earth Modeling
+
+g_=[0,0,9.80665]; % (m/s^2) at geoid
+a_e=6378137; % (m) equatorial 
+f=1/298.257223563; % flattening factor
+LS_=[37, 125]; % (deg)
+
+%% Transform
+
+if abs(t_gps-t_ahrs)<10^-2
+    r_ned=lla2ned(r_gps_lla, LS_);
+    v_ned=ecef2ned(v_gps_ecef, LS_);
+    q_ned_body=q_product(q_ahrs, q_ned_bodyinit);
+else
+    q_ned_body=q_product(q_ahrs, q_ned_bodyinit);
+    DCM_ned_body=q_to_DCM(q_ned_body);
+    w_ahrs_low=lowpass(w_ahrs, w_cutoff);
+    w_ahrs_prev_low=lowpass(w_ahrs_prev, w_cutoff);
+    w_dot=(w_ahrs_low-w_ahrs_prev_low)/dt;
+    a_ned=imu2ned(a_ahrs, DCM_ned_body, w_dot, g_, d_cg_imu);
+    v_ned=v_ned_prev+a_ned*dt;
+    r_ned=r_ned_prev+v_ned_prev*dt+0.5*a_ned*dt^2;
+    drift_scalar=r_ned(3)+h_pre;
+    drift=[drift_scalar; drift_scalar; drift_scalar];
+    r_ned=r_ned-drift;
+end
+
+r_ned_prev=r_ned;
+v_ned_prev=v_ned;
+
+k=rho(-r_(3))*C_D*S_ref/(2*m_tu1*norm(g_));
+apogee_info=apogee_est(r_ned, v_ned, g_, k);
+
+%% Outputs
+
+r_ned
+v_ned
+q_ned_body
+apogee_info
+
+%% Functions
+
+function ned=lla2ned(r_, ref_)
+    xyz = wgslla2xyz(r_(1), r_(2), r_(3));
+    enu = wgsxyz2enu(xyz, ref_(1), ref_(2), 0);
+    ned = [enu(2); enu(1); -enu(3)];
+end
+
+function ned=ecef2ned(v_, ref_)
+    R1=rot(90+ref_(2), 3);
+    R2=rot(90-ref_(1), 1);
+    R=R2*R1;
+    enu=R*v_;
+    ned = [enu(2); enu(1); -enu(3)];
+end
+
+function a_ned=imu2ned(a_, DCM_ned_body, w, w_dot, g_, d)
+    a_body=a_+DCM_ned_body*g_-cross(w_dot,d)-cross(w, cross(w, d));
+    a_ned=DCM_ned_body'*a_body;
+end
+
+function Q_product=q_product(q_1, q_2)
+    
+end
+
+function DCM=q_to_DCM(q_)
+    
+end
+
+function Apogee_est=apogee_est(r_, v_, g_, k)
+    theta_0=acos(dot(v_/norm(v_), [v_(1), v_(2), 0]/norm([v_(1), v_(2), 0])));
+    H_apogee=-r_(3)+(norm(v_)^2)*(sin(theta_0)^2)/(norm(g_)*(2+k*sin(theta_0)*norm(v_)^2));
+    H_local=H_apogee+r_(3);
+    T=2*sqrt(2*H_local/norm(g_));
+    V_apogee=norm(v_)*cos(theta_0)/sqrt(1+k*(norm(v_)^2)*(sin(theta_0)+(cos(theta_0)^2)*log(tan(theta_0/2+pi/4))));
+    t_apogee=(T-k*H_local*V_apogee)/2;
+    Apogee_est=[H_apogee; t_apogee; V_apogee];
+end
+
+function Rho=rho(h)
+    rho_0=1.225; % (kg/m^3)
+    H_n=10.4*10^3; % (m)
+    Rho=rho_0*exp(-h/H_n);
+end
