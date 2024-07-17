@@ -1,25 +1,19 @@
-//based on code from: Tom Heylen
-
-#include <SoftwareSerial.h>
-
-boolean state = false;
-
+// based on code from: Tom Heylen
 #define HC12 Serial1
+
 long baud = 9600;
+bool state = false;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 
   Serial.begin(baud);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
   Serial.println("Serial monitor available... OK");
 
   Serial.print("Serial link available... ");
   HC12.begin(9600);
 
-  //test HC-12
+  // test HC-12
   Serial.print("HC-12 available... ");
   HC12.write("AT+DEFAULT");
   delay(1000);
@@ -31,7 +25,6 @@ void setup() {
 }
 
 void loop() {
-
   digitalWrite(LED_BUILTIN, state);
   Serial.println("1");
   HC12.println("test123.");
