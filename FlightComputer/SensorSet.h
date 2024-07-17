@@ -33,42 +33,48 @@ struct SensorDataCollection {
                        IMUSensor::DATA_COUNT),
         adc_data(sensor_data + GPSSensor::DATA_COUNT +
                  IMUSensor::DATA_COUNT + BarometerSensor::DATA_COUNT) {}
+
+  operator String() const {
+    char buffer[400];
+    sprintf(
+        buffer,
+        "Time: %lu\n"
+        "[GPS] Latitude: %.7f, Longitude: %.7f, Altitude: %.7f\n"
+        "[IMU] Acceleration: (%.7f, %.7f, %.7f)\n"
+        "      Angular velocity: (%.7f, %.7f, %.7f)\n"
+        "      Quaternion: (%.7f, %.7f, %.7f, %.7f)\n"
+        "[Barometer] Pressure: %.7f, Temperature: %.7f\n"
+        "[ADC] Voltage: %.7f, Pressure: %.7f",
+        current_time, gps_data[GPSSensor::LATITUDE],
+        gps_data[GPSSensor::LONGITUDE], gps_data[GPSSensor::ALTITUDE],
+        imu_data[IMUSensor::ACC_X], imu_data[IMUSensor::ACC_Y],
+        imu_data[IMUSensor::ACC_Z], imu_data[IMUSensor::ANG_VEL_X],
+        imu_data[IMUSensor::ANG_VEL_Y], imu_data[IMUSensor::ANG_VEL_Z],
+        imu_data[IMUSensor::QUAT_X], imu_data[IMUSensor::QUAT_Y],
+        imu_data[IMUSensor::QUAT_Z], imu_data[IMUSensor::QUAT_W],
+        barometer_data[BarometerSensor::PRESSURE],
+        barometer_data[BarometerSensor::TEMPERATURE],
+        adc_data[ADCSensor::VOLTAGE], adc_data[ADCSensor::PRESSURE]);
+    return String(buffer);
+  }
 };
 
-class SensorSet {
-public:
-  enum SensorType {
-    GPS,
-    IMU,
-    BAROMETER,
-    VOLTMETER,
-    PRESSURE,
-    SENSOR_COUNT
-  };
-  SensorSet();
-  /* Add a sensor to the set. */
-  void addSensor(Sensor *sensor, enum SensorType sensor_type);
-  void addSensor(GPSSensor *sensor);
-  void addSensor(IMUSensor *sensor);
-  void addSensor(BarometerSensor *sensor);
-  void addSensor(ADCSensor *sensor);
+struct SensorSet {
+  /* Sensors to receive data. */
+  IMUSensor imu_sensor;
+  GPSSensor gps_sensor;
+  BarometerSensor barometer_sensor;
+  ADCSensor adc_sensor;
 
-  void beginAll();  // Begin all sensors.
-  void updateAll(); // Update all sensors.
-
-  /* Getter for specific sensor data. */
-  float getValue(enum GPSSensor::GPSDataIndex index) const;
-  float getValue(enum IMUSensor::IMUDataIndex index) const;
-  float getValue(enum BarometerSensor::BarometerDataIndex index) const;
-  float getValue(enum ADCSensor::ADCDataIndex index) const;
-
-  const SensorDataCollection &getSensorDataCollection() const {
-    return sensor_data_collection;
-  }
-
-private:
-  Sensor *sensors[SENSOR_COUNT];
+  /* Sensor data collection. */
   SensorDataCollection sensor_data_collection;
+
+  void beginAll() {
+    imu_sensor.begin(sensor_data_collection.imu_data);
+    gps_sensor.begin(sensor_data_collection.gps_data);
+    barometer_sensor.begin(sensor_data_collection.barometer_data);
+    adc_sensor.begin(sensor_data_collection.adc_data);
+  }
 };
 
 #endif
