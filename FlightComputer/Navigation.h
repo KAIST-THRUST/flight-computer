@@ -15,6 +15,7 @@ struct NavigationData {
   float pos_ENU[3]; // m, position in ENU
   float vel_ENU[3]; // m/s, velocity in ENU
   float alt_ENU; // m, altitude in ENU
+  float max_altitude; // m, maximum altitude
 };
 
 class Navigation {
