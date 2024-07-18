@@ -20,7 +20,34 @@ void StateMachine::begin() {
 }
 
 void StateMachine::standBy() {
-  if (true) {
+  uint32_t current_time = millis();
+  sensor_set.gps_sensor.update(); // Need to be updated every loop.
+  if (current_time - sensor_data_collection.current_time >=
+      (1000 / SAMPLING_RATE)) {
+    /* Update sensor_data_collection every SAMPLING_RATE Hz. */
+    sensor_data_collection.current_time = current_time;
+    sensor_set.imu_sensor.update();
+    sensor_set.barometer_sensor.update();
+    sensor_set.adc_sensor.update();
+
+    /* Logging sensor data to Serial. */
+    Serial.println(log_formatter.format(sensor_data_collection));
+
+    /* Writing raw data to SD card. */
+    // sd_manager.write(log_formatter.format(sensor_data_collection));
+  }
+  if (millis() >= 30 * 1000) {
+    navigation.initializeLaunchSiteConfig(
+        sensor_data_collection.gps_data[GPSSensor::LATITUDE_LS] / 100,
+        sensor_data_collection.gps_data[GPSSensor::LONGITUDE_LS] / 100,
+        sensor_data_collection.gps_data[GPSSensor::ALTITUDE_LS],
+        sensor_data_collection.gps_data[GPSSensor::GEOID_HEIGHT_LS],
+        sensor_data_collection
+            .barometer_data[BarometerSensor::PRESSURE_AVG],
+        sensor_data_collection
+            .barometer_data[BarometerSensor::TEMPERATURE_AVG]);
+    // navigation.initializeLaunchSiteConfig(36.37, 127.36, 52.8, 24.3,
+    //                                       997.877, 298);
     rocket_current_state = RocketState::ST_BURN;
   }
 }
@@ -42,10 +69,16 @@ void StateMachine::coast() {
     sensor_set.barometer_sensor.update();
     sensor_set.adc_sensor.update();
 
-    // navigation.update(sensor_data_collection);
+    navigation.update(sensor_data_collection);
+    navigation_data.current_time = sensor_data_collection.current_time;
+    navigation.getPosENU_m(navigation_data.pos_ENU);
+    navigation.getVelENU_ms(navigation_data.vel_ENU);
+    navigation_data.max_altitude =
+        max(navigation_data.max_altitude, navigation_data.pos_ENU[2]);
 
     /* Logging sensor data to Serial. */
     Serial.println(log_formatter.format(sensor_data_collection));
+    Serial.println(log_formatter.format(navigation_data));
 
     /* Writing raw data to SD card. */
     // sd_manager.write(log_formatter.format(sensor_data_collection));
@@ -89,7 +122,7 @@ bool StateMachine::shouldEject(
     SensorDataCollection &sensor_data_collection,
     NavigationData &navigation_data) {
   bool isDescenting =
-      (navigation_data.max_altitude - navigation_data.alt_ENU) > 2.5;
+      (navigation_data.max_altitude - navigation_data.pos_ENU[2]) > 2.5;
 
   // bool isTimeToEject = millis() > 2 * 1000; // 2 seconds after launch
   return isDescenting;

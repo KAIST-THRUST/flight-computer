@@ -13,31 +13,7 @@
 
 static StateMachine rocket_state_machine;
 
-// /* Servo motor. */
-// static NonBlockingServo serv;
-
-// /* Sensor data collection. */
-// static SensorDataCollection sensor_data_collection;
-
-// /* Sensors set. */
-// static SensorSet sensor_set(sensor_data_collection);
-
-// /* SD card manager. */
-// static SDManager sd_manager;
-
-// /* Time variables for non-blocking delay. */
-// static uint32_t current_time;
-// static RealTimeClock rtc;
-
 void setup() {
-  // rtc.begin();
-  // Serial.begin(BAUD_RATE);
-  // Serial.println("Hello World!"); // serial monitor test.
-  // serv.begin();
-  // sensor_set.beginAll();
-  // delay(1000); // Wait for sensors to initialize.
-  // sd_manager.begin(rtc.getTimeData());
-  // sd_manager.write("Hello World!"); // SD card test.
   rocket_state_machine.begin();
 }
 
@@ -46,9 +22,6 @@ void loop() {
   /* Servo part. */
   // updateServoFromSerial(serv);
   /*-----------------------------------------------------------------*/
-  Serial.println("Hello World!"); // serial monitor test.
-  delay(10);
-
   switch (rocket_current_state) {
   case RocketState::ST_STAND_BY:
     /* Stand by state. */
@@ -63,24 +36,6 @@ void loop() {
   case RocketState::ST_COAST:
     /* Coast state. */
     rocket_state_machine.coast();
-    // current_time = millis();
-    // sensor_set.gps_sensor.update(); // Need to be updated every loop.
-    // if (current_time - sensor_data_collection.current_time >=
-    //     (1000 / SAMPLING_RATE)) {
-    //   /* Update every SAMPLING_RATE Hz. */
-    //   sensor_data_collection.current_time = current_time;
-    //   sensor_set.imu_sensor.update();
-    //   sensor_set.barometer_sensor.update();
-    //   sensor_set.adc_sensor.update();
-
-    //   /* Logging sensor data to Serial. */
-    //   Serial.println(sensor_data_collection);
-    //   Serial.println("");
-
-    //   /* Writing sensor data to SD card. */
-    //   sd_manager.write(sensor_data_collection);
-    //   sd_manager.write("");
-    // }
     break;
 
   case RocketState::ST_DESCENT:

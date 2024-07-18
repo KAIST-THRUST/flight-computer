@@ -1,6 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include "Navigation.h"
 #include "SensorSet.h"
 #include "config.h"
 
@@ -8,9 +9,9 @@ enum class LogCategory { INFO, DATA, ERROR, DEBUG };
 
 class LogFormatter {
 public:
-  virtual const char* format(LogCategory category,
-                        const String &message) = 0; // 100 char max
-  virtual const char* format(SensorDataCollection &data) = 0;
+  virtual const char *format(LogCategory category,
+                             const String &message) = 0; // 100 char max
+  virtual const char *format(SensorDataCollection &data) = 0;
 
 protected:
   char buffer[500];
@@ -18,7 +19,8 @@ protected:
 
 class DefaultLogFormatter : public LogFormatter {
 public:
-  const char* format(LogCategory category, const String &message) override {
+  const char *format(LogCategory category,
+                     const String &message) override {
     const char *category_str = nullptr;
     switch (category) {
     case LogCategory::INFO:
@@ -39,7 +41,7 @@ public:
     return buffer;
   }
 
-  const char* format(SensorDataCollection &data) {
+  const char *format(SensorDataCollection &data) {
     sprintf(buffer,
             "[%07lu] [DATA] [GPS] Lat: %.7f, Long: %.7f, Alt: %.7f\n"
             "[%07lu] [DATA] [IMU] Acc: (%.7f, %.7f, %.7f)\n"
@@ -66,15 +68,28 @@ public:
             data.adc_data[ADCSensor::PRESSURE]);
     return buffer;
   }
+
+  const char *format(NavigationData &data) {
+    sprintf(buffer,
+            "[%07lu] [DATA] [NAV] pos: (%.7f, %.7f, %.7f)\n"
+            "[%07lu] [DATA]       vel: (%.7f, %.7f, %.7f)\n"
+            "[%07lu] [DATA]       max_alt: %.7f",
+            data.current_time, data.pos_ENU[0], data.pos_ENU[1],
+            data.pos_ENU[2], data.current_time, data.vel_ENU[0],
+            data.vel_ENU[1], data.vel_ENU[2], data.current_time,
+            data.max_altitude);
+    return buffer;
+  }
 };
 
 // Combined LogDevice interface
 // class LogDevice {
 // public:
 //   LogDevice(LogFormatter *fmt) : formatter(fmt) {}
-//   virtual void write(LogCategory category, const String &message) = 0;
-//   virtual void writeRaw(const uint8_t *data,
-//                         size_t length) = 0; // New method for raw data
+//   virtual void write(LogCategory category, const String &message) =
+//   0; virtual void writeRaw(const uint8_t *data,
+//                         size_t length) = 0; // New method for raw
+//                         data
 //   virtual bool available() { return false; }
 //   virtual int read() {
 //     return -1;
