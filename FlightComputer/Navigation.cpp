@@ -179,7 +179,7 @@ void Navigation::updateNavigation() {
   // correct navigation solution
   r_body_curr_ENU[0] = r_body_curr_ENU[0] - drift;
   r_body_curr_ENU[1] = r_body_curr_ENU[1] - drift;
-  r_body_curr_ENU[2] = r_body_curr_ENU[2] - drift;
+  r_body_curr_ENU[2] = inc_h_baro;
 
   return;
 }
