@@ -31,7 +31,7 @@ extern enum RocketState rocket_current_state;
 /* Navigation configurations. */
 // Gyro Low Pass Filter Config
 #define T_S 0.02     // Nominal sampling rate of gyroscope, in sec
-#define F_CUTOFF 0.5 // Cutoff frequency of low pass filter, in Hz
+#define F_CUTOFF 5 // Cutoff frequency of low pass filter, in Hz
 
 // TU-1.f Vehicle Config
 #define M_DRY 3.7 // Dry mass of the vehicle after burnout, in kg
