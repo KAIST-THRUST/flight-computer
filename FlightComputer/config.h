@@ -31,14 +31,14 @@ extern enum RocketState rocket_current_state;
 
 /* Navigation configurations. */
 // Gyro Low Pass Filter Config
-#define T_S 0.02   // Nominal sampling rate of gyroscope, in sec
+#define T_S 0.01   // Nominal sampling rate of gyroscope, in sec
 #define F_CUTOFF 5 // Cutoff frequency of low pass filter, in Hz
 
 // TU-1.f Vehicle Config
 #define M_DRY 3.7 // Dry mass of the vehicle after burnout, in kg
 #define C_D0 0.3  // Zero lift drag coefficient of the vehicle
 #define S_REF 0.00849486653 // Ref area for aerodynamic coeff, in m^2
-#define IMU_CG_DIST 0.25    // Distance from cg to imu, in m
+#define IMU_CG_DIST 0    // Distance from cg to imu, in m
 
 /* Servo motor configurations. */
 #define SERVO_PIN 2        // Servo motor pin number.
