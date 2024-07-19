@@ -1,98 +1,15 @@
 #include "Navigation.h"
 
-void Navigation::quat_to_DCM(float quat[4], float dcm[3][3]) {
-  float q0, q1, q2, q3;
-  float q0q0, q1q1, q2q2, q3q3, q0q1, q0q2, q0q3, q1q2, q1q3, q2q3;
-
-  q0 = quat[3];
-  q1 = quat[0];
-  q2 = quat[1];
-  q3 = quat[2];
-
-  // for calculation
-  q0q0 = q0 * q0;
-  q1q1 = q1 * q1;
-  q2q2 = q2 * q2;
-  q3q3 = q3 * q3;
-  q0q1 = q0 * q1;
-  q0q2 = q0 * q2;
-  q0q3 = q0 * q3;
-  q1q2 = q1 * q2;
-  q1q3 = q1 * q3;
-  q2q3 = q2 * q3;
-
-  // construct elements of DCM
-  dcm[0][0] = q0q0 + q1q1 - q2q2 - q3q3;
-  dcm[0][1] = 2 * (q1q2 + q0q3);
-  dcm[0][2] = 2 * (q1q3 - q0q2);
-
-  dcm[1][0] = 2 * (q1q2 - q0q3);
-  dcm[1][1] = q0q0 - q1q1 + q2q2 - q3q3;
-  dcm[1][2] = 2 * (q2q3 + q0q1);
-
-  dcm[2][0] = 2 * (q1q3 + q0q2);
-  dcm[2][1] = 2 * (q2q3 - q0q1);
-  dcm[2][2] = q0q0 - q1q1 - q2q2 + q3q3;
-
-  return;
-}
-
-void Navigation::lla_to_ECEF(float lat_deg, float lon_deg,
-                             float alt_wgs84, float r_ECEF_m[3]) {
-  float phi, lam, h;
-  phi = lat_deg * DEG_TO_RAD; // rad, latitude
-  lam = lon_deg * DEG_TO_RAD; // rad, longitude
-  h = alt_wgs84;              // m, ellipsoidal altitude (wgs84)
-
-  float sinLam, cosLam, sinPhi, cosPhi;
-  sinLam = sin(lam);
-  cosLam = cos(lam);
-  sinPhi = sin(phi);
-  cosPhi = cos(phi);
-
-  float N;
-  N = a_e / sqrt(1 - e_2 * sinLam * sinLam);
-
-  r_ECEF_m[0] = (N + h) * cosPhi * cosLam;    // m
-  r_ECEF_m[1] = (N + h) * cosPhi * sinLam;    // m
-  r_ECEF_m[2] = ((1 - e_2) * N + h) * sinPhi; // m
-
-  return;
-}
-
-void Navigation::get_dcm_ECEF_to_ENU(float lat_deg, float lon_deg,
-                                     float dcm_ECEF_to_ENU[3][3]) {
-  float phi = lat_deg * DEG_TO_RAD;
-  float lam = lon_deg * DEG_TO_RAD;
-
-  float sLam = sin(lam);
-  float cLam = cos(lam);
-  float sPhi = sin(phi);
-  float cPhi = cos(phi);
-
-  dcm_ECEF_to_ENU[0][0] = -sLam;
-  dcm_ECEF_to_ENU[0][1] = cLam;
-  dcm_ECEF_to_ENU[0][2] = 0;
-  dcm_ECEF_to_ENU[1][0] = -sPhi * cLam;
-  dcm_ECEF_to_ENU[1][1] = -sPhi * sLam;
-  dcm_ECEF_to_ENU[1][2] = cPhi;
-  dcm_ECEF_to_ENU[2][0] = cPhi * cLam;
-  dcm_ECEF_to_ENU[2][1] = cPhi * sLam;
-  dcm_ECEF_to_ENU[2][2] = sPhi;
-
-  return;
-}
-
-void Navigation::initializeLaunchSiteConfig(
-    float lat_deg, float lon_deg, float alt_orthometric_m,
-    float geoid_separation_m, float atm_pressure_Pa, float atm_temp_K) {
+void Navigation::initializeLaunchSiteConfig(float lat_ls_deg, float lon_ls_deg, 
+                                            float alt_ls_orthometric_m, float geoid_separation_ls_m, 
+                                            float atm_pressure_ls_hPa, float atm_temp_ls_C) {
   // update launch site config attributes
-  lat_deg_launch_site = lat_deg;
-  lon_deg_launch_site = lon_deg;
-  alt_orthometric_launch_site = alt_orthometric_m;
-  geoid_separation_launch_site = geoid_separation_m;
-  atm_pressure_launch_site = atm_pressure_Pa;
-  atm_temp_launch_site = atm_temp_K;
+  lat_deg_launch_site = lat_ls_deg;
+  lon_deg_launch_site = lon_ls_deg;
+  alt_orthometric_launch_site = alt_ls_orthometric_m;
+  geoid_separation_launch_site = geoid_separation_ls_m;
+  atm_pressure_launch_site = atm_pressure_ls_hPa;
+  atm_temp_launch_site = atm_temp_ls_C + 273.15;  // convert to Kelvin
 
   // calculate derived attributes
   alt_wgs84_launch_site =
@@ -164,10 +81,9 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
 }
 
 void Navigation::updateBMPMeasurement(float p_baro_hPa) {
-  p_baro = p_baro_hPa * 100;
   // calculate altitude increment from pressure measurement
   inc_h_baro = (R * atm_temp_launch_site / g0) *
-               log(atm_pressure_launch_site / p_baro); // m
+               log(atm_pressure_launch_site / p_baro_hPa); // m
 
   return;
 }
@@ -197,18 +113,13 @@ void Navigation::updateGPSMeasurement(float *gps_data) {
 }
 
 void Navigation::update(SensorDataCollection &newSensorData) {
-  updateSensorValues(newSensorData);
-  updateNavigation();
-  return;
-}
-
-void Navigation::updateSensorValues(
-    SensorDataCollection &newSensorData) {
   updateAHRSMeasurement(newSensorData.current_time,
                         newSensorData.imu_data);
   updateBMPMeasurement(
       newSensorData.barometer_data[BarometerSensor::PRESSURE]);
   updateGPSMeasurement(newSensorData.gps_data);
+  
+  updateNavigation();
   return;
 }
 

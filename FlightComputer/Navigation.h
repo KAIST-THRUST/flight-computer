@@ -20,28 +20,21 @@ struct NavigationData {
 
 class Navigation {
   public:
-    void initializeLaunchSiteConfig(float lat_deg, float lon_deg, float alt_orthometric_m, float geoid_separation_m, float atm_pressure_Pa, float atm_temp_K);
+    void initializeLaunchSiteConfig(float lat_ls_deg, float lon_ls_deg, float alt_ls_orthometric_m, float geoid_separation_ls_m, float atm_pressure_ls_hPa, float atm_temp_ls_C);
     void update(SensorDataCollection& newSensorData);
-    void getPosENU_m(float pos_ENU[3]);
-    void getVelENU_ms(float vel_ENU[3]);
+    void getPosENU_m(float pos_ENU[3]); // get ENU position of the vehicle in m
+    void getVelENU_ms(float vel_ENU[3]); // get ENU velocity of the vehicle in m/s
     float getAltENU_m(); // return altitude measured from the launch site (AGL)
     
     ApogeeEstimate getChudinovApogeeEst(); // estimate apogee height, time to apogee, and velocity at apogee using Chudinov eqn.
 
   private:
     // private methods
-    void updateSensorValues(SensorDataCollection& newSensorData);
-    void updateNavigation(); // update and estimate the best navigation solution
-    
     void updateAHRSMeasurement(uint32_t t_ms, float* imu_data);
     void updateBMPMeasurement(float p_baro_hPa);
     void updateGPSMeasurement(float* gps_data);
-    
-    // helper functions
-    void quat_to_DCM(float quat[4], float dcm[3][3]);
-    void lla_to_ECEF(float lat_deg, float lon_deg, float alt_wgs84, float r_ECEF[3]); // convert lla to ecef
-    void get_dcm_ECEF_to_ENU(float lat_deg, float lon_deg, float dcm_ECEF_to_ENU[3][3]); // calculate dcm for ecef to enu at launch site
 
+    void updateNavigation(); // update and estimate the best navigation solution
 
     // private attributes
 
@@ -58,10 +51,6 @@ class Navigation {
     // Universal Constant
     const float g0 = 9.80665; // m/s^2, gravitational acc
     const float g_ENU[3] = {0, 0, -g0}; // m/s^2, gravitational acc vec in ENU
-    const float a_e = 6378137; // m, equatorial radius of Earth
-    const float fltn = 1 / 298.257223563f; // -, flattening of Earth
-    const float b_e = a_e * (1 - fltn); // m
-    const float e_2 = 1 - b_e*b_e / (a_e*a_e); // eccentricity squared
     const float R = 287.05; // J/kg-K, air gas constant
 
     // Launch Site Configuration
@@ -70,7 +59,7 @@ class Navigation {
     float lon_deg_launch_site; // deg, longitude of launch site
     float alt_orthometric_launch_site; // m, orthometric altitude of the launch site
     float geoid_separation_launch_site; // m, geoid separation at the launch site
-    float atm_pressure_launch_site; // Pa, atm pressure measured at launch origin
+    float atm_pressure_launch_site; // hPa, atm pressure measured at launch origin
     float atm_temp_launch_site; // K, atm temperature measured at launch origin
     // should be calculated (derived)
     float alt_wgs84_launch_site; // m, wgs84 altitude at the launch site
@@ -99,7 +88,6 @@ class Navigation {
     
     // Barometer
     // should be measured
-    float p_baro = 101325; // Pa, atm pressure measured at altitude by BMP280
     // should be calculated (derived)
     float inc_h_baro = 0; // m, pressure altitude measured by BMP280.
 
