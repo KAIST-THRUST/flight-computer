@@ -47,8 +47,8 @@ void GPSSensor::update() {
     int lat_dir = (GPS.lat == 'N') ? 1 : -1;
     int lon_dir = (GPS.lon == 'E') ? 1 : -1;
 
-    data_ptr[LATITUDE] = GPS.latitude * lat_dir;
-    data_ptr[LONGITUDE] = GPS.longitude * lon_dir;
+    data_ptr[LATITUDE] = GPS.latitudeDegrees * lat_dir;
+    data_ptr[LONGITUDE] = GPS.longitudeDegrees * lon_dir;
     data_ptr[ALTITUDE] = GPS.altitude;
     data_ptr[GEOID_HEIGHT] = GPS.geoidheight;
     if (millis() <= 180 * 1000 &&

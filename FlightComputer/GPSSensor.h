@@ -18,10 +18,10 @@
 class GPSSensor : public Sensor {
 public:
   enum GPSDataIndex {
-    LATITUDE,        // in degrees/minutes
-    LATITUDE_LS,     // in degrees/minutes
-    LONGITUDE,       // in degrees/minutes
-    LONGITUDE_LS,    // in degrees/minutes
+    LATITUDE,        // in degrees
+    LATITUDE_LS,     // in degrees
+    LONGITUDE,       // in degrees
+    LONGITUDE_LS,    // in degrees
     ALTITUDE,        // in meters
     ALTITUDE_LS,     // in meters
     GEOID_HEIGHT,    // in meters
