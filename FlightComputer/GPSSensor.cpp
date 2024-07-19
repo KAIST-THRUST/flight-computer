@@ -68,7 +68,10 @@ String GPSSensor::toString() const {
          ", Average Altitude: " + String(data_ptr[ALTITUDE_LS], 7);
 }
 
-bool GPSSensor::isFixed() const { return is_fixed; }
+bool GPSSensor::isValid() const {
+  return is_fixed && abs(data_ptr[ALTITUDE]) > 0.0001 &&
+         abs(data_ptr[GEOID_HEIGHT]) > 0.0001;
+}
 
 float GPSSensor::getLatitude() const { return data_ptr[LATITUDE]; }
 

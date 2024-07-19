@@ -34,7 +34,7 @@ public:
   void update() override;
   String toString() const override;
 
-  bool isFixed() const;
+  bool isValid() const;
   float getLatitude() const;
   float getLongitude() const;
   float getAltitude() const;

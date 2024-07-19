@@ -46,7 +46,7 @@ void StateMachine::begin() {
 
 void StateMachine::boot() {
   sensor_set.gps_sensor.update();
-  if (sensor_set.gps_sensor.isFixed()) {
+  if (sensor_set.gps_sensor.isValid()) {
     rocket_current_state = RocketState::ST_STAND_BY;
     initial_fix_time = 0;
     Serial.println(
