@@ -18,14 +18,14 @@ StateMachine::StateMachine()
           &sensor_data_collection.gps_data[GPSSensor::GEOID_HEIGHT_LS]),
       bar_pressure_avg(
           &sensor_data_collection
-              .barometer_data[BarometerSensor::PRESSURE],
+               .barometer_data[BarometerSensor::PRESSURE],
           &sensor_data_collection
-              .barometer_data[BarometerSensor::PRESSURE_AVG]),
+               .barometer_data[BarometerSensor::PRESSURE_AVG]),
       bar_temperature_avg(
           &sensor_data_collection
-              .barometer_data[BarometerSensor::TEMPERATURE],
+               .barometer_data[BarometerSensor::TEMPERATURE],
           &sensor_data_collection
-              .barometer_data[BarometerSensor::TEMPERATURE_AVG]) {}
+               .barometer_data[BarometerSensor::TEMPERATURE_AVG]) {}
 
 void StateMachine::begin() {
   rtc.begin();
@@ -36,9 +36,11 @@ void StateMachine::begin() {
   delay(1000); // Wait for sensors to initialize.
   const TimeData &time_data = rtc.getTimeData();
   Serial.print(log_formatter.format(LogCategory::INFO, time_data));
+  String file_name_time = String(time_data) + ".txt";
   Serial.println(" First rocket drop test.");
-  sd_manager.begin(String(time_data) + ".txt");
-  // sd_manager.write("Hello World!"); // SD card test.
+  sd_manager.begin(file_name_time);
+  sd_manager.write("Hello World!"); // SD card test.
+  sd_manager.close();
   delay(5000);
 }
 
@@ -77,6 +79,7 @@ void StateMachine::standBy() {
 
     /* Logging sensor data to Serial. */
     Serial.println(log_formatter.format(sensor_data_collection));
+    sd_manager.write(log_formatter.format(sensor_data_collection));
 
     /* Writing raw data to SD card. */
     // sd_manager.write(log_formatter.format(sensor_data_collection));
@@ -129,7 +132,8 @@ void StateMachine::coast() {
     Serial.println(log_formatter.format(navigation_data));
 
     /* Writing raw data to SD card. */
-    // sd_manager.write(log_formatter.format(sensor_data_collection));
+    sd_manager.write(log_formatter.format(sensor_data_collection));
+    sd_manager.write(log_formatter.format(navigation_data));
   }
 
   if (shouldEject(sensor_data_collection, navigation_data)) {

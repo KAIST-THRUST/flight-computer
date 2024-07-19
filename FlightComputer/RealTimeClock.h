@@ -21,7 +21,7 @@ struct TimeData {
 
   operator String() const {
     char buffer[50];
-    sprintf(buffer, "%d-%02d-%02d %02d:%02d:%02d", year, month, day,
+    sprintf(buffer, "%d-%02d-%02d %02d-%02d-%02d", year, month, day,
             hour, minute, second);
     return String(buffer);
   }

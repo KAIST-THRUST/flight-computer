@@ -40,6 +40,7 @@ void SDManager::open() {
 }
 
 void SDManager::close() {
+  file.println("File closed.");
   if (file_opened) {
     file.close();
     file_opened = false;
