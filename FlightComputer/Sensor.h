@@ -31,23 +31,16 @@ protected:
 
 class AverageSensorValue {
 public:
-  AverageSensorValue() : avg(0.0), count(0) {}
+  AverageSensorValue(float *s, float *d) : source(s), des(d), count(0) {}
 
-  void addValue(float value) {
-    /* Calculate the new average. */
-    avg = (avg * count / (count + 1)) + value / (count + 1);
+  void update() {
+    *des = *des * count / (count + 1) + *source / (count + 1);
     count++;
   }
 
-  float getAverage() const { return avg; }
-
-  void reset() {
-    avg = 0;
-    count = 0;
-  }
-
 private:
-  float avg;
+  const float *source;
+  float *des;
   int count;
 };
 

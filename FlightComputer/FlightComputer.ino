@@ -3,19 +3,11 @@
  * @brief Main sketch file for execution of the flight computer.
  */
 
-#include "Navigation.h"
-#include "NonBlockingServo.h"
-#include "RealTimeClock.h"
 #include "StateMachine.h"
-#include "SDManager.h"
-#include "SensorSet.h"
-#include "util.h"
 
 static StateMachine rocket_state_machine;
 
-void setup() {
-  rocket_state_machine.begin();
-}
+void setup() { rocket_state_machine.begin(); }
 
 void loop() {
   /*-----------------------------------------------------------------*/
@@ -23,6 +15,11 @@ void loop() {
   // updateServoFromSerial(serv);
   /*-----------------------------------------------------------------*/
   switch (rocket_current_state) {
+  case RocketState::ST_BOOT:
+    /* Boot state. */
+    rocket_state_machine.boot();
+    break;
+
   case RocketState::ST_STAND_BY:
     /* Stand by state. */
     rocket_state_machine.standBy();

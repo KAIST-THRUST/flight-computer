@@ -29,13 +29,6 @@ void BarometerSensor::update() {
   bmp_pressure->getEvent(&pressure_event);
   data_ptr[PRESSURE] = pressure_event.pressure;
   data_ptr[TEMPERATURE] = temp_event.temperature;
-  if (millis() <= 180 * 1000 &&
-      rocket_current_state == RocketState::ST_STAND_BY) {
-    pressure_avg.addValue(data_ptr[PRESSURE]);
-    data_ptr[PRESSURE_AVG] = pressure_avg.getAverage();
-    temperature_avg.addValue(data_ptr[TEMPERATURE]);
-    data_ptr[TEMPERATURE_AVG] = temperature_avg.getAverage();
-  }
 }
 
 String BarometerSensor::toString() const {

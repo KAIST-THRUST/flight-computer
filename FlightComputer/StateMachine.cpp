@@ -2,7 +2,30 @@
 
 enum RocketState rocket_current_state = INITIAL_ROCKET_STATE;
 
-StateMachine::StateMachine() : sensor_set(sensor_data_collection) {}
+StateMachine::StateMachine()
+    : sensor_data_collection(), sensor_set(sensor_data_collection),
+      gps_latitude_ls(
+          &sensor_data_collection.gps_data[GPSSensor::LATITUDE],
+          &sensor_data_collection.gps_data[GPSSensor::LATITUDE_LS]),
+      gps_longitude_ls(
+          &sensor_data_collection.gps_data[GPSSensor::LONGITUDE],
+          &sensor_data_collection.gps_data[GPSSensor::LONGITUDE_LS]),
+      gps_altitude_ls(
+          &sensor_data_collection.gps_data[GPSSensor::ALTITUDE],
+          &sensor_data_collection.gps_data[GPSSensor::ALTITUDE_LS]),
+      gps_geoid_height_ls(
+          &sensor_data_collection.gps_data[GPSSensor::GEOID_HEIGHT],
+          &sensor_data_collection.gps_data[GPSSensor::GEOID_HEIGHT_LS]),
+      bar_pressure_avg(
+          &sensor_data_collection
+              .barometer_data[BarometerSensor::PRESSURE],
+          &sensor_data_collection
+              .barometer_data[BarometerSensor::PRESSURE_AVG]),
+      bar_temperature_avg(
+          &sensor_data_collection
+              .barometer_data[BarometerSensor::TEMPERATURE],
+          &sensor_data_collection
+              .barometer_data[BarometerSensor::TEMPERATURE_AVG]) {}
 
 void StateMachine::begin() {
   rtc.begin();
@@ -14,14 +37,26 @@ void StateMachine::begin() {
   const TimeData &time_data = rtc.getTimeData();
   Serial.print(log_formatter.format(LogCategory::INFO, time_data));
   Serial.println(" First rocket drop test.");
-  // sd_manager.begin(String(time_data) + ".txt");
+  sd_manager.begin(String(time_data) + ".txt");
   // sd_manager.write("Hello World!"); // SD card test.
   delay(5000);
 }
 
+void StateMachine::boot() {
+  sensor_set.gps_sensor.update();
+  if (sensor_set.gps_sensor.isFixed()) {
+    rocket_current_state = RocketState::ST_STAND_BY;
+    initial_fix_time = 0;
+    Serial.println(
+        log_formatter.format(LogCategory::INFO, "All Sensors fixed."));
+    Serial.println(
+        log_formatter.format(LogCategory::INFO, "Switch to STAND_BY"));
+  }
+}
+
 void StateMachine::standBy() {
   uint32_t current_time = millis();
-  sensor_set.gps_sensor.update(); // Need to be updated every loop.
+  sensor_set.gps_sensor.update(); // GPS need to be updated every loop.
   if (current_time - sensor_data_collection.current_time >=
       (1000 / SAMPLING_RATE)) {
     /* Update sensor_data_collection every SAMPLING_RATE Hz. */
@@ -30,31 +65,43 @@ void StateMachine::standBy() {
     sensor_set.barometer_sensor.update();
     sensor_set.adc_sensor.update();
 
+    /* Updating average sensor values for 3 minutes. */
+    if (initial_fix_time < 30 * 1000) {
+      gps_latitude_ls.update();
+      gps_longitude_ls.update();
+      gps_altitude_ls.update();
+      gps_geoid_height_ls.update();
+      bar_pressure_avg.update();
+      bar_temperature_avg.update();
+    }
+
     /* Logging sensor data to Serial. */
     Serial.println(log_formatter.format(sensor_data_collection));
 
     /* Writing raw data to SD card. */
     // sd_manager.write(log_formatter.format(sensor_data_collection));
   }
-  if (millis() >= 30 * 1000) {
+  if (initial_fix_time >= 30 * 1000) {
     navigation.initializeLaunchSiteConfig(
-        sensor_data_collection.gps_data[GPSSensor::LATITUDE_LS] / 100,
-        sensor_data_collection.gps_data[GPSSensor::LONGITUDE_LS] / 100,
+        sensor_data_collection.gps_data[GPSSensor::LATITUDE_LS],
+        sensor_data_collection.gps_data[GPSSensor::LONGITUDE_LS],
         sensor_data_collection.gps_data[GPSSensor::ALTITUDE_LS],
         sensor_data_collection.gps_data[GPSSensor::GEOID_HEIGHT_LS],
         sensor_data_collection
             .barometer_data[BarometerSensor::PRESSURE_AVG],
         sensor_data_collection
             .barometer_data[BarometerSensor::TEMPERATURE_AVG]);
-    // navigation.initializeLaunchSiteConfig(36.37, 127.36, 52.8, 24.3,
-    //                                       997.877, 298);
     rocket_current_state = RocketState::ST_BURN;
+    Serial.println(
+        log_formatter.format(LogCategory::INFO, "Switch to BURN"));
   }
 }
 
 void StateMachine::burn() {
   if (true) {
     rocket_current_state = RocketState::ST_COAST;
+    Serial.println(
+        log_formatter.format(LogCategory::INFO, "Switch to COAST"));
   }
 }
 
@@ -69,6 +116,7 @@ void StateMachine::coast() {
     sensor_set.barometer_sensor.update();
     sensor_set.adc_sensor.update();
 
+    /* Update and get navigation data from Navigation class. */
     navigation.update(sensor_data_collection);
     navigation_data.current_time = sensor_data_collection.current_time;
     navigation.getPosENU_m(navigation_data.pos_ENU);

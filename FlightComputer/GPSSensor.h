@@ -19,13 +19,14 @@ class GPSSensor : public Sensor {
 public:
   enum GPSDataIndex {
     LATITUDE,        // in degrees
-    LATITUDE_LS,     // in degrees
     LONGITUDE,       // in degrees
-    LONGITUDE_LS,    // in degrees
     ALTITUDE,        // in meters
-    ALTITUDE_LS,     // in meters
     GEOID_HEIGHT,    // in meters
+    LATITUDE_LS,     // in degrees
+    LONGITUDE_LS,    // in degrees
+    ALTITUDE_LS,     // in meters
     GEOID_HEIGHT_LS, // in meters
+    IS_UPDATED,      // 0 or 1
     DATA_COUNT
   };
   GPSSensor();
@@ -33,16 +34,14 @@ public:
   void update() override;
   String toString() const override;
 
+  bool isFixed() const;
   float getLatitude() const;
   float getLongitude() const;
   float getAltitude() const;
 
 private:
   Adafruit_GPS GPS;
-  AverageSensorValue latitude_ls;
-  AverageSensorValue longitude_ls;
-  AverageSensorValue altitude_ls;
-  AverageSensorValue geoid_height_ls;
+  bool is_fixed;
 };
 
 #endif

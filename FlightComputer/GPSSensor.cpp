@@ -1,6 +1,6 @@
 #include "GPSSensor.h"
 
-GPSSensor::GPSSensor() : GPS(&GPS_SERIAL) {
+GPSSensor::GPSSensor() : GPS(&GPS_SERIAL), is_fixed(false) {
   sensor_data.data_count = DATA_COUNT;
 }
 
@@ -38,11 +38,17 @@ void GPSSensor::update() {
       return;
   }
 
-  if (current_time - last_update_time < (1000 / GPS_SAMPLING_RATE))
+  if (current_time - last_update_time < (1000 / GPS_SAMPLING_RATE)) {
+    data_ptr[IS_UPDATED] = 0;
     return;
+  }
   last_update_time = current_time;
 
   if (GPS.fix) {
+    /* If GPS is fixed, set is_fixed to true. */
+    if (!is_fixed) {
+      is_fixed = true;
+    }
     /* Direction of latitude and longitude in sign. */
     int lat_dir = (GPS.lat == 'N') ? 1 : -1;
     int lon_dir = (GPS.lon == 'E') ? 1 : -1;
@@ -51,17 +57,7 @@ void GPSSensor::update() {
     data_ptr[LONGITUDE] = GPS.longitudeDegrees * lon_dir;
     data_ptr[ALTITUDE] = GPS.altitude;
     data_ptr[GEOID_HEIGHT] = GPS.geoidheight;
-    if (millis() <= 180 * 1000 &&
-        rocket_current_state == RocketState::ST_STAND_BY) {
-      altitude_ls.addValue(data_ptr[ALTITUDE]);
-      data_ptr[ALTITUDE_LS] = altitude_ls.getAverage();
-      latitude_ls.addValue(data_ptr[LATITUDE]);
-      data_ptr[LATITUDE_LS] = latitude_ls.getAverage();
-      longitude_ls.addValue(data_ptr[LONGITUDE]);
-      data_ptr[LONGITUDE_LS] = longitude_ls.getAverage();
-      geoid_height_ls.addValue(data_ptr[GEOID_HEIGHT]);
-      data_ptr[GEOID_HEIGHT_LS] = geoid_height_ls.getAverage();
-    }
+    data_ptr[IS_UPDATED] = 1;
   }
 }
 
@@ -71,6 +67,8 @@ String GPSSensor::toString() const {
          ", Altitude: " + String(data_ptr[ALTITUDE], 7) +
          ", Average Altitude: " + String(data_ptr[ALTITUDE_LS], 7);
 }
+
+bool GPSSensor::isFixed() const { return is_fixed; }
 
 float GPSSensor::getLatitude() const { return data_ptr[LATITUDE]; }
 

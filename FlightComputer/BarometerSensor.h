@@ -17,8 +17,8 @@ class BarometerSensor : public Sensor {
 public:
   enum BarometerDataIndex {
     PRESSURE,        // in hPa
-    PRESSURE_AVG,    // in hPa
     TEMPERATURE,     // in Celsius
+    PRESSURE_AVG,    // in hPa
     TEMPERATURE_AVG, // in Celsius
     DATA_COUNT
   };
@@ -31,8 +31,6 @@ private:
   Adafruit_BMP280 bmp;
   Adafruit_Sensor *bmp_pressure;
   Adafruit_Sensor *bmp_temp;
-  AverageSensorValue pressure_avg;
-  AverageSensorValue temperature_avg;
 };
 
 #endif

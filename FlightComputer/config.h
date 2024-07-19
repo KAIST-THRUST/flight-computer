@@ -10,6 +10,7 @@
 
 /* Define the state of the rocket. */
 enum class RocketState {
+  ST_BOOT,
   ST_STAND_BY,
   ST_BURN,
   ST_COAST,
@@ -26,11 +27,11 @@ extern enum RocketState rocket_current_state;
 #define BAUD_RATE 115200  // Baud rate of the main serial port.
 #define MAX_DATA_COUNT 10 // Maximum number of sensor output data.
 #define SAMPLING_RATE 100 // Base sampling rate, in Hz.
-#define INITIAL_ROCKET_STATE RocketState::ST_STAND_BY // Initial state.
+#define INITIAL_ROCKET_STATE RocketState::ST_BOOT // Initial state.
 
 /* Navigation configurations. */
 // Gyro Low Pass Filter Config
-#define T_S 0.02     // Nominal sampling rate of gyroscope, in sec
+#define T_S 0.02   // Nominal sampling rate of gyroscope, in sec
 #define F_CUTOFF 5 // Cutoff frequency of low pass filter, in Hz
 
 // TU-1.f Vehicle Config
