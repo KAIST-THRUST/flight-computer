@@ -89,11 +89,7 @@ void Navigation::updateBMPMeasurement(float p_baro_hPa) {
 }
 
 void Navigation::updateGPSMeasurement(float *gps_data) {
-  float new_wgs84_alt =
-      gps_data[GPSSensor::ALTITUDE] + gps_data[GPSSensor::GEOID_HEIGHT];
-  isGPSUpdated = (new_wgs84_alt !=
-                  alt_wgs84_body); // gps is updated if prev alt is
-                                   // different from the new alt
+  isGPSUpdated = gps_data[GPSSensor::IS_UPDATED] > 0.5f;
 
   if (!isGPSUpdated)
     return; // if gps is not updated simply just return.
@@ -179,7 +175,7 @@ void Navigation::updateNavigation() {
   // correct navigation solution
   r_body_curr_ENU[0] = r_body_curr_ENU[0] - drift;
   r_body_curr_ENU[1] = r_body_curr_ENU[1] - drift;
-  r_body_curr_ENU[2] = r_body_curr_ENU[2] - drift;
+  r_body_curr_ENU[2] = inc_h_baro;
 
   return;
 }
