@@ -27,4 +27,9 @@ void crossProduct(float v_A[3], float v_B[3], float res[3]);
 void matrixVecMult(float T[3][3], float b[3], float res[3]);
 void matrixTranspose(float A[3][3], float res[3][3]);
 
+/* 3D Attitude and frame conversion related utility functions. */
+void quat_to_DCM(float quat[4], float dcm[3][3]);
+void lla_to_ECEF(float lat_deg, float lon_deg, float alt_wgs84, float r_ECEF_m[3]);
+void get_dcm_ECEF_to_ENU(float lat_deg, float lon_deg, float dcm_ECEF_to_ENU[3][3]);
+
 #endif
