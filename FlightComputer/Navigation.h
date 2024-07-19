@@ -20,7 +20,7 @@ struct NavigationData {
 
 class Navigation {
   public:
-    void initializeLaunchSiteConfig(float lat_ls_deg, float lon_ls_deg, float alt_ls_orthometric_m, float geoid_separation_ls_m, float atm_pressure_ls_Pa, float atm_temp_ls_K);
+    void initializeLaunchSiteConfig(float lat_ls_deg, float lon_ls_deg, float alt_ls_orthometric_m, float geoid_separation_ls_m, float atm_pressure_ls_hPa, float atm_temp_ls_C);
     void update(SensorDataCollection& newSensorData);
     void getPosENU_m(float pos_ENU[3]); // get ENU position of the vehicle in m
     void getVelENU_ms(float vel_ENU[3]); // get ENU velocity of the vehicle in m/s

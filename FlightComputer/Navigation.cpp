@@ -2,14 +2,14 @@
 
 void Navigation::initializeLaunchSiteConfig(float lat_ls_deg, float lon_ls_deg, 
                                             float alt_ls_orthometric_m, float geoid_separation_ls_m, 
-                                            float atm_pressure_ls_hPa, float atm_temp_ls_K) {
+                                            float atm_pressure_ls_hPa, float atm_temp_ls_C) {
   // update launch site config attributes
   lat_deg_launch_site = lat_ls_deg;
   lon_deg_launch_site = lon_ls_deg;
   alt_orthometric_launch_site = alt_ls_orthometric_m;
   geoid_separation_launch_site = geoid_separation_ls_m;
   atm_pressure_launch_site = atm_pressure_ls_hPa;
-  atm_temp_launch_site = atm_temp_ls_K;
+  atm_temp_launch_site = atm_temp_ls_C + 273.15;  // convert to Kelvin
 
   // calculate derived attributes
   alt_wgs84_launch_site =
