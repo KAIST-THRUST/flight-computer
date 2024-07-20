@@ -1,2 +1,3 @@
-Hello World!
-File closed.
+version https://git-lfs.github.com/spec/v1
+oid sha256:69a15cdc55cfc21e811d44e9a2308d04aef604ab7d2c1d3c39de156a314b00e7
+size 28
