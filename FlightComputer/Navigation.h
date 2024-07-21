@@ -4,6 +4,7 @@
 #include "util.h"
 #include "config.h"
 #include "SensorSet.h"
+#include "SignalFilter.h"
 
 struct ApogeeEstimate {
   float t_apogee; // sec
@@ -38,11 +39,10 @@ class Navigation {
 
     // private attributes
 
+    // LPF
+    LPF lpf_gyro[3] = {LPF(F_CUTOFF, T_S), LPF(F_CUTOFF, T_S), LPF(F_CUTOFF, T_S)}; // LPF for gyro data
+
     /* Below parameters are calculated from the value specified in 'config.h' file. */
-    // LPF parameters
-    const float tau = 1 / (2 * PI * F_CUTOFF); // sec, time constant of the transfer function of the lpf
-    const float alpha = T_S / (tau + T_S); // y(n) = alpha * x(n) + (1-a) * y(n-1)
-    
     // TU-1.f configuration
     float r_imu_B[3] = {IMU_CG_DIST, 0, 0}; // m, cg to imu poistion vector (in body frame)
     /* (You can change above) */
