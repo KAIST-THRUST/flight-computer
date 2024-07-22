@@ -33,7 +33,7 @@ class Navigation {
     // private methods
     void updateAHRSMeasurement(uint32_t t_ms, float* imu_data);
     void updateBMPMeasurement(float p_baro_hPa);
-    void updateGPSMeasurement(float* gps_data);
+    void updateGPSMeasurement(uint32_t t_ms, float* gps_data);
 
     void updateNavigation(); // update and estimate the best navigation solution
 
@@ -94,6 +94,8 @@ class Navigation {
     // GPS
     bool isGPSUpdated = false; // true if new GPS message has arrived, false otherwise.
     // should be measured
+    uint32_t t_gps_prev_msec = 0; // millisec, GPS aquired time at previous time step
+    uint32_t t_gps_msec = 0; // millisec, latest GPS aquired time
     // should be calculated (derived)
     float alt_wgs84_body = 0; // m, wgs84 altitude of the vehicle from GPS
     float r_body_gps_ECEF[3]; // m, position from gps, in ECEF
@@ -105,6 +107,9 @@ class Navigation {
     float v_body_prev_ENU[3] = {0, 0, 0}; // m/s, vel navigation solution in previous time step (in ENU frame)
     float r_body_curr_ENU[3] = {0, 0, 0}; // m, pos navigation solution in current time step (in ENU frame)
     float v_body_curr_ENU[3] = {0, 0, 0}; // m/s, vel navigation solution in current time step (in ENU frame)
+    float a_drift_E = 0; // m, acc drift in ENU
+    float a_drift_N = 0; // m, acc drift in ENU
+    float a_drift_U = 0; // m, acc drift in ENU 
 };
 
 #endif
