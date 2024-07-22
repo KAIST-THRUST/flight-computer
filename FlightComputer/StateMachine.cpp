@@ -25,12 +25,14 @@ StateMachine::StateMachine()
           &sensor_data_collection
                .barometer_data[BarometerSensor::TEMPERATURE],
           &sensor_data_collection
-               .barometer_data[BarometerSensor::TEMPERATURE_AVG]) {}
+               .barometer_data[BarometerSensor::TEMPERATURE_AVG]),
+      hc12(HC12_SERIAL, &log_formatter) {}
 
 void StateMachine::begin() {
   rtc.begin();
   Serial.begin(BAUD_RATE);
   Serial.println("Hello World!"); // serial monitor test.
+  hc12.begin();
   servo.begin();
   sensor_set.beginAll();
   delay(1000); // Wait for sensors to initialize.
@@ -40,14 +42,19 @@ void StateMachine::begin() {
   Serial.println(" First rocket drop test.");
   sd_manager.begin(file_name_time);
   sd_manager.write("Hello World!"); // SD card test.
-  sd_manager.close();
+  memcpy(hc12_buffer, &rocket_current_state, 1);
   delay(5000);
 }
 
 void StateMachine::boot() {
   sensor_set.gps_sensor.update();
-  if (sensor_set.gps_sensor.isValid()) {
+  if (hc12_timer > 10) {
+    hc12.writeRaw(hc12_buffer, 1);
+    hc12_timer -= 10;
+  }
+  if (sensor_set.gps_sensor.isValid() || millis() > 30 * 1000) {
     rocket_current_state = RocketState::ST_STAND_BY;
+    memcpy(hc12_buffer, &rocket_current_state, 1);
     initial_fix_time = 0;
     Serial.println(
         log_formatter.format(LogCategory::INFO, "All Sensors fixed."));
@@ -81,8 +88,28 @@ void StateMachine::standBy() {
     Serial.println(log_formatter.format(sensor_data_collection));
     sd_manager.write(log_formatter.format(sensor_data_collection));
 
-    /* Writing raw data to SD card. */
-    // sd_manager.write(log_formatter.format(sensor_data_collection));
+    memcpy(hc12_buffer, &rocket_current_state, 1);
+    memcpy(hc12_buffer + 1, &sensor_data_collection.current_time, 4);
+    for (int i = 0; i < 8; i++) {
+      memcpy(hc12_buffer + 5 + i * 4,
+             &sensor_data_collection.gps_data[i], 4);
+    }
+    for (int i = 0; i < 10; i++) {
+      memcpy(hc12_buffer + 37 + i * 4,
+             &sensor_data_collection.imu_data[i], 4);
+    }
+    for (int i = 0; i < 4; i++) {
+      memcpy(hc12_buffer + 77 + i * 4,
+             &sensor_data_collection.barometer_data[i], 4);
+    }
+    for (int i = 0; i < 2; i++) {
+      memcpy(hc12_buffer + 93 + i * 4,
+             &sensor_data_collection.adc_data[i], 4);
+    }
+    if (hc12_timer > 1000 / HC12_SAMPLING_RATE) {
+      hc12.writeRaw(hc12_buffer, 101);
+      hc12_timer -= 1000 / HC12_SAMPLING_RATE;
+    }
   }
   if (initial_fix_time >= 30 * 1000) {
     navigation.initializeLaunchSiteConfig(

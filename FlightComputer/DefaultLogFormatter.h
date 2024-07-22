@@ -1,7 +1,7 @@
 #ifndef DEFAULTLOGFORMATTER_H
 #define DEFAULTLOGFORMATTER_H
 
-#include "Logger.h"
+#include "LogDevice.h"
 #include "SensorSet.h"
 #include "config.h"
 
@@ -29,7 +29,8 @@ public:
     return buffer;
   }
 
-  const char *format(SensorDataCollection &data) {
+  /* Formats raw sensor data collection. */
+  const char *format(SensorDataCollection &data) override {
     sprintf(buffer,
             "[%07lu] [DATA] [GPS] Lat: %.7f, Long: %.7f, Alt: %.7f, "
             "Geo: %.7f\n"
@@ -69,7 +70,8 @@ public:
     return buffer;
   }
 
-  const char *format(NavigationData &data) {
+  /* Formats navigation data. */
+  const char *format(NavigationData &data) override {
     sprintf(buffer,
             "[%07lu] [DATA] [NAV] pos: (%.7f, %.7f, %.7f)\n"
             "[%07lu] [DATA]       vel: (%.7f, %.7f, %.7f)\n"

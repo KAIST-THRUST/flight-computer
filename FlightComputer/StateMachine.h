@@ -2,12 +2,13 @@
 #define STATEMACHINE_H
 
 #include "DefaultLogFormatter.h"
-#include "Logger.h"
+#include "LogDevice.h"
 #include "Navigation.h"
 #include "NonBlockingServo.h"
 #include "RealTimeClock.h"
 #include "SDManager.h"
 #include "SensorSet.h"
+#include "SerialDevice.h"
 #include "config.h"
 
 class StateMachine {
@@ -45,6 +46,9 @@ private:
   /* Logger. */
   DefaultLogFormatter log_formatter; // Log formatter for logging data.
   SDManager sd_manager; // SD card manager for writing data.
+  SerialDevice hc12; // Serial device for writing data.
+  byte hc12_buffer[110]; // Buffer for HC12 communication device.
+  elapsedMillis hc12_timer; // Timer for HC12 communication device.
 
   /* Time related variables. */
   elapsedMillis initial_fix_time; // Time elapsed since initial fix.

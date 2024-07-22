@@ -9,7 +9,7 @@
 #include <Arduino.h>
 
 /* Define the state of the rocket. */
-enum class RocketState {
+enum RocketState : byte {
   ST_BOOT,
   ST_STAND_BY,
   ST_BURN,
@@ -38,7 +38,7 @@ extern enum RocketState rocket_current_state;
 #define M_DRY 3.7 // Dry mass of the vehicle after burnout, in kg
 #define C_D0 0.3  // Zero lift drag coefficient of the vehicle
 #define S_REF 0.00849486653 // Ref area for aerodynamic coeff, in m^2
-#define IMU_CG_DIST 0    // Distance from cg to imu, in m
+#define IMU_CG_DIST 0       // Distance from cg to imu, in m
 
 /* Servo motor configurations. */
 #define SERVO_PIN 2        // Servo motor pin number.
@@ -65,6 +65,11 @@ extern enum RocketState rocket_current_state;
 
 /* SD card configurations. */
 #define FILE_NAME "sensor_data.txt" // File name to store sensor data.
+
+/* HC12 configuration. */
+#define HC12_SERIAL Serial1  // Serial name connected to HC12.
+#define HC12_BAUD_RATE 9600  // Baud rate of HC12.
+#define HC12_SAMPLING_RATE 1 // HC12 sampling rate, in Hz.
 
 /*-------------------------------------------------------------------*/
 

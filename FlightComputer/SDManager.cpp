@@ -10,6 +10,7 @@ void SDManager::begin(String file_name) {
   }
   open();
   file_opened = true;
+  close();
 }
 
 void SDManager::write(const String &data) {
