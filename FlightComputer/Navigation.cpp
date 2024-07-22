@@ -40,15 +40,11 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
               dcm_ENU_to_B); // get dcm_ENU_to_B from quat_ENU_to_B
   matrixTranspose(dcm_ENU_to_B,
                   dcm_B_to_ENU); // dcm_B_to_ENU = dcm_ENU_to_B^T
-  angular_rate_filtered_B[0] =
-      alpha * angular_rate_B[0] +
-      (1 - alpha) * angular_rate_filtered_prev_B[0];
-  angular_rate_filtered_B[1] =
-      alpha * angular_rate_B[1] +
-      (1 - alpha) * angular_rate_filtered_prev_B[1];
-  angular_rate_filtered_B[2] =
-      alpha * angular_rate_B[2] +
-      (1 - alpha) * angular_rate_filtered_prev_B[2];
+  
+  angular_rate_filtered_B[0] = lpf_gyro[0].filter(angular_rate_B[0]);
+  angular_rate_filtered_B[1] = lpf_gyro[1].filter(angular_rate_B[1]);
+  angular_rate_filtered_B[2] = lpf_gyro[2].filter(angular_rate_B[2]);
+
   angular_acc_B[0] =
       (angular_rate_filtered_B[0] - angular_rate_filtered_prev_B[0]) /
       dt_AHRS_sec; // rad/s2
@@ -75,6 +71,11 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
   acc_body_B[2] = acc_imu_B[2] - cross_w_dot_r_imu_B[2] -
                   cross_w_cross_w_r_imu_B[2];
 
+  // drift correction
+  acc_body_B[0] -= a_drift_E;
+  acc_body_B[1] -= a_drift_N;
+  acc_body_B[2] -= a_drift_U;
+
   matrixVecMult(dcm_B_to_ENU, acc_body_B, acc_body_ENU);
 
   return;
@@ -88,12 +89,14 @@ void Navigation::updateBMPMeasurement(float p_baro_hPa) {
   return;
 }
 
-void Navigation::updateGPSMeasurement(float *gps_data) {
+void Navigation::updateGPSMeasurement(uint32_t t_ms, float *gps_data) {
+  t_gps_prev_msec = t_gps_msec;
   isGPSUpdated = gps_data[GPSSensor::IS_UPDATED] > 0.5f;
 
   if (!isGPSUpdated)
     return; // if gps is not updated simply just return.
 
+  t_gps_msec = t_ms; // update lateset gps time
   // calculate derived attributes
   alt_wgs84_body =
       gps_data[GPSSensor::ALTITUDE] + gps_data[GPSSensor::GEOID_HEIGHT];
@@ -113,7 +116,7 @@ void Navigation::update(SensorDataCollection &newSensorData) {
                         newSensorData.imu_data);
   updateBMPMeasurement(
       newSensorData.barometer_data[BarometerSensor::PRESSURE]);
-  updateGPSMeasurement(newSensorData.gps_data);
+  updateGPSMeasurement(newSensorData.current_time, newSensorData.gps_data);
   
   updateNavigation();
   return;
@@ -145,6 +148,11 @@ void Navigation::updateNavigation() {
     v_body_curr_ENU[1] = v_body_prev_ENU[1];
     v_body_curr_ENU[2] = v_body_prev_ENU[2];
 
+    // drift correction
+    float dt_gps_sec = (t_gps_msec - t_gps_prev_msec) * 0.001f; // sec
+    a_drift_E = 2*(r_body_prev_ENU[0] - r_body_curr_ENU[0]) / dt_gps_sec / dt_gps_sec; // drift for 1 sec to 0.01 sec
+    a_drift_N = 2*(r_body_prev_ENU[1] - r_body_curr_ENU[1]) / dt_gps_sec / dt_gps_sec; // drift for 1 sec to 0.01 sec
+
     return;
   }
 
@@ -164,18 +172,19 @@ void Navigation::updateNavigation() {
   r_body_curr_ENU[1] = r_body_prev_ENU[1] +
                        v_body_prev_ENU[1] * dt_sec +
                        0.5 * acc_body_ENU[1] * dt_sec_2;
-  r_body_curr_ENU[2] = r_body_prev_ENU[2] +
+
+  float r_body_integrated_U;
+  r_body_integrated_U = r_body_prev_ENU[2] +
                        v_body_prev_ENU[2] * dt_sec +
                        0.5 * acc_body_ENU[2] * dt_sec_2;
 
-  // estimate drift
-  float drift;
-  drift = r_body_curr_ENU[2] - inc_h_baro; // m
+  a_drift_U = 2 * (r_body_integrated_U - inc_h_baro) / dt_sec / dt_sec; // acc drift in U
 
   // correct navigation solution
-  r_body_curr_ENU[0] = r_body_curr_ENU[0] - drift;
-  r_body_curr_ENU[1] = r_body_curr_ENU[1] - drift;
-  r_body_curr_ENU[2] = inc_h_baro;
+  r_body_curr_ENU[0] = r_body_curr_ENU[0];
+  r_body_curr_ENU[1] = r_body_curr_ENU[1];
+  r_body_curr_ENU[2] = inc_h_baro; // always assume that barometer altitude is true
+  
 
   return;
 }
