@@ -16,7 +16,7 @@ def parse_log(input_file, output_file):
     gps_data_2 = [['Lat_Launch_Site (deg)', 'Lon_Launch_Site (deg)', 'AltMSL_Launch_Site (m)', 'Geoid_Launch_Site (m)']]
     
     ahrs_data_1 = [['Time (ms)', 'AccX (m/s2)', 'AccY (m/s2)', 'AccZ (m/s2)']]
-    ahrs_data_2 = [['GyroX (deg/s)', 'GyroY (deg/s)', 'GyroZ (deg/s)']]
+    ahrs_data_2 = [['GyroX (rad/s)', 'GyroY (rad/s)', 'GyroZ (rad/s)']]
     ahrs_data_3 = [['qX', 'qY', 'qZ', 'qW']]
     
     bmp_data_1 = [['Time (ms)', 'p_baro (hPa)', 'T_baro (degC)']]
