@@ -52,7 +52,7 @@ void StateMachine::boot() {
     hc12.writeRaw(hc12_buffer, 1);
     hc12_timer -= 10;
   }
-  if (sensor_set.gps_sensor.isValid() || millis() > 30 * 1000) {
+  if (sensor_set.gps_sensor.isValid() || millis() > S_TO_MS(BOOT_TIME)) {
     rocket_current_state = RocketState::ST_STAND_BY;
     memcpy(hc12_buffer, &rocket_current_state, 1);
     initial_fix_time = 0;
@@ -75,7 +75,7 @@ void StateMachine::standBy() {
     sensor_set.adc_sensor.update();
 
     /* Updating average sensor values for 3 minutes. */
-    if (initial_fix_time < 30 * 1000) {
+    if (initial_fix_time < S_TO_MS(30)) {
       gps_latitude_ls.update();
       gps_longitude_ls.update();
       gps_altitude_ls.update();
@@ -111,7 +111,7 @@ void StateMachine::standBy() {
       hc12_timer -= 1000 / HC12_SAMPLING_RATE;
     }
   }
-  if (initial_fix_time >= 30 * 1000) {
+  if (initial_fix_time >= S_TO_MS(30)) {
     navigation.initializeLaunchSiteConfig(
         sensor_data_collection.gps_data[GPSSensor::LATITUDE_LS],
         sensor_data_collection.gps_data[GPSSensor::LONGITUDE_LS],

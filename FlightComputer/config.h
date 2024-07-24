@@ -1,5 +1,5 @@
 /**
- * @file configuration.h
+ * @file config.h
  * @brief File containing configuration information of our project.
  */
 
@@ -28,6 +28,7 @@ extern enum RocketState rocket_current_state;
 #define MAX_DATA_COUNT 10 // Maximum number of sensor output data.
 #define SAMPLING_RATE 100 // Base sampling rate, in Hz.
 #define INITIAL_ROCKET_STATE RocketState::ST_BOOT // Initial state.
+#define BOOT_TIME 30                              // Boot time, in sec.
 
 /* Navigation configurations. */
 // Gyro Low Pass Filter Config
