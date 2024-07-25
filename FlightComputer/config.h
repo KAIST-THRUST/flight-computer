@@ -35,6 +35,12 @@ extern enum RocketState rocket_current_state;
 #define T_S 0.01   // Nominal sampling rate of gyroscope, in sec
 #define F_CUTOFF 5 // Cutoff frequency of low pass filter, in Hz
 
+// Quadratic Filter Config
+#define Q_ALPHA 0.1
+#define Q_BETA 0.37
+#define Q_ZETA 0.37
+#define Q_BATCH_SIZE 30
+
 // TU-1.f Vehicle Config
 #define M_DRY 3.7 // Dry mass of the vehicle after burnout, in kg
 #define C_D0 0.3  // Zero lift drag coefficient of the vehicle

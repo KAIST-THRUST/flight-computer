@@ -3,6 +3,15 @@
 void Navigation::initializeLaunchSiteConfig(float lat_ls_deg, float lon_ls_deg, 
                                             float alt_ls_orthometric_m, float geoid_separation_ls_m, 
                                             float atm_pressure_ls_hPa, float atm_temp_ls_C) {
+  // update Quadratic Filter configuration
+  qf_gyro.setconfig(Q_ALPHA,Q_BETA,Q_ZETA,Q_BATCH_SIZE);
+  qf_bmp.setconfig(Q_ALPHA,Q_BETA,Q_ZETA,Q_BATCH_SIZE);
+  qf_acc.setconfig(Q_ALPHA,Q_BETA,Q_ZETA,Q_BATCH_SIZE);
+  qf_gyro.initFilter();
+  qf_bmp.initFilter();
+  qf_acc.initFilter();
+
+  
   // update launch site config attributes
   lat_deg_launch_site = lat_ls_deg;
   lon_deg_launch_site = lon_ls_deg;
@@ -40,20 +49,21 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
               dcm_ENU_to_B); // get dcm_ENU_to_B from quat_ENU_to_B
   matrixTranspose(dcm_ENU_to_B,
                   dcm_B_to_ENU); // dcm_B_to_ENU = dcm_ENU_to_B^T
-  
-  angular_rate_filtered_B[0] = lpf_gyro[0].filter(angular_rate_B[0]);
-  angular_rate_filtered_B[1] = lpf_gyro[1].filter(angular_rate_B[1]);
-  angular_rate_filtered_B[2] = lpf_gyro[2].filter(angular_rate_B[2]);
+  qf_gyro(((float)t_AHRS_msec)*0.001f,angular_rate_B,angular_rate_filtered_B,angular_acc_B);
 
-  angular_acc_B[0] =
-      (angular_rate_filtered_B[0] - angular_rate_filtered_prev_B[0]) /
-      dt_AHRS_sec; // rad/s2
-  angular_acc_B[1] =
-      (angular_rate_filtered_B[1] - angular_rate_filtered_prev_B[1]) /
-      dt_AHRS_sec; // rad/s2
-  angular_acc_B[2] =
-      (angular_rate_filtered_B[2] - angular_rate_filtered_prev_B[2]) /
-      dt_AHRS_sec; // rad/s2
+  // angular_rate_filtered_B[0] = lpf_gyro[0].filter(angular_rate_B[0]);
+  // angular_rate_filtered_B[1] = lpf_gyro[1].filter(angular_rate_B[1]);
+  // angular_rate_filtered_B[2] = lpf_gyro[2].filter(angular_rate_B[2]);
+
+  // angular_acc_B[0] =
+  //     (angular_rate_filtered_B[0] - angular_rate_filtered_prev_B[0]) /
+  //     dt_AHRS_sec; // rad/s2
+  // angular_acc_B[1] =
+  //     (angular_rate_filtered_B[1] - angular_rate_filtered_prev_B[1]) /
+  //     dt_AHRS_sec; // rad/s2
+  // angular_acc_B[2] =
+  //     (angular_rate_filtered_B[2] - angular_rate_filtered_prev_B[2]) /
+  //     dt_AHRS_sec; // rad/s2
 
   float cross_w_dot_r_imu_B[3];
   float cross_w_r_imu_B[3];
