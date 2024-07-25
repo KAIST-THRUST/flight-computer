@@ -75,7 +75,7 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
                cross_w_cross_w_r_imu_B);
 
   float acc_imu_B_filtered[3];
-  float dummyArray[3]
+  float dummyArray[3];
 
   qf_acc.runFilter(((float)t_AHRS_msec)*0.001f,acc_imu_B,acc_imu_B_filtered,dummyArray);
 
