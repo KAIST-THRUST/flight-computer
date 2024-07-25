@@ -47,6 +47,9 @@ class Navigation {
     LPF lpf_bmp = LPF(F_CUTOFF, T_S); // LPF for barometer data
     LPF lpf_acc[3] = {LPF(F_CUTOFF, T_S), LPF(F_CUTOFF, T_S), LPF(F_CUTOFF, T_S)}; // LPF for imu acc data
 
+    // Quadratic Filter Object
+    QuadraticFilter qf_gyro,qf_bmp,qf_acc;
+
     /* Below parameters are calculated from the value specified in 'config.h' file. */
     // TU-1.f configuration
     float r_imu_B[3] = {IMU_CG_DIST, 0, 0}; // m, cg to imu poistion vector (in body frame)
