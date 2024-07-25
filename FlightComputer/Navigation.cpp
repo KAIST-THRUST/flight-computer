@@ -64,19 +64,24 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
   crossProduct(angular_rate_filtered_B, cross_w_r_imu_B,
                cross_w_cross_w_r_imu_B);
 
-  acc_body_B[0] = acc_imu_B[0] - cross_w_dot_r_imu_B[0] -
+  float acc_imu_B_filtered[3];
+  acc_imu_B_filtered[0] = lpf_acc[0].filter(acc_imu_B[0]);
+  acc_imu_B_filtered[1] = lpf_acc[1].filter(acc_imu_B[1]);
+  acc_imu_B_filtered[2] = lpf_acc[2].filter(acc_imu_B[2]);
+
+  acc_body_B[0] = acc_imu_B_filtered[0] - cross_w_dot_r_imu_B[0] -
                   cross_w_cross_w_r_imu_B[0];
-  acc_body_B[1] = acc_imu_B[1] - cross_w_dot_r_imu_B[1] -
+  acc_body_B[1] = acc_imu_B_filtered[1] - cross_w_dot_r_imu_B[1] -
                   cross_w_cross_w_r_imu_B[1];
-  acc_body_B[2] = acc_imu_B[2] - cross_w_dot_r_imu_B[2] -
+  acc_body_B[2] = acc_imu_B_filtered[2] - cross_w_dot_r_imu_B[2] -
                   cross_w_cross_w_r_imu_B[2];
 
-  // drift correction
-  acc_body_B[0] -= a_drift_E;
-  acc_body_B[1] -= a_drift_N;
-  acc_body_B[2] -= a_drift_U;
-
   matrixVecMult(dcm_B_to_ENU, acc_body_B, acc_body_ENU);
+
+  // drift correction
+  acc_body_ENU[0] -= a_drift_E;
+  acc_body_ENU[1] -= a_drift_N;
+  acc_body_ENU[2] -= a_drift_U;
 
   return;
 }
@@ -133,31 +138,38 @@ void Navigation::updateNavigation() {
   v_body_prev_ENU[1] = v_body_curr_ENU[1];
   v_body_prev_ENU[2] = v_body_curr_ENU[2];
 
-  // if gps is renewed then use gps
-  if (isGPSUpdated) {
-    // assume current gps position as a navigation solution for EN
-    // coordinate
-    r_body_curr_ENU[0] = r_body_gps_ENU[0];
-    r_body_curr_ENU[1] = r_body_gps_ENU[1];
-    // U coordinate estimate
-    r_body_curr_ENU[2] =
-        inc_h_baro; // always assume that barometer altitude is true
+  if (isGPSUpdated) updateNavByGPS();
+  else updateNavByIMU();
 
-    // assume prev velocity solution is still usable at current time
-    // step (because of pos discontinuity) i.e. virtually no velocity
-    // update
-    v_body_curr_ENU[0] = v_body_prev_ENU[0];
-    v_body_curr_ENU[1] = v_body_prev_ENU[1];
-    v_body_curr_ENU[2] = v_body_prev_ENU[2];
+  return;
+}
 
-    // drift correction
-    float dt_gps_sec = (t_gps_msec - t_gps_prev_msec) * 0.001f; // sec
-    a_drift_E = 2*(r_body_prev_ENU[0] - r_body_curr_ENU[0]) / dt_gps_sec / dt_gps_sec; // drift for 1 sec to 0.01 sec
-    a_drift_N = 2*(r_body_prev_ENU[1] - r_body_curr_ENU[1]) / dt_gps_sec / dt_gps_sec; // drift for 1 sec to 0.01 sec
+void Navigation::updateNavByGPS() {
+  // assume current gps position as a navigation solution for EN
+  // coordinate
+  r_body_curr_ENU[0] = r_body_gps_ENU[0];
+  r_body_curr_ENU[1] = r_body_gps_ENU[1];
+  // U coordinate estimate
+  r_body_curr_ENU[2] =
+      inc_h_baro; // always assume that barometer altitude is true
 
-    return;
-  }
+  // assume prev velocity solution is still usable at current time
+  // step (because of pos discontinuity) i.e. virtually no velocity
+  // update
+  v_body_curr_ENU[0] = v_body_prev_ENU[0];
+  v_body_curr_ENU[1] = v_body_prev_ENU[1];
+  v_body_curr_ENU[2] = v_body_prev_ENU[2];
 
+  // estimate drifts in E and N directions
+  float dt_gps_sec = (t_gps_msec - t_gps_prev_msec) * 0.001f; // sec
+  float dt_gps_sec_2 = dt_gps_sec * dt_gps_sec; // sec2
+  a_drift_E = 2*(r_body_prev_ENU[0] - r_body_curr_ENU[0]) / dt_gps_sec_2; // drift in E direction
+  a_drift_N = 2*(r_body_prev_ENU[1] - r_body_curr_ENU[1]) / dt_gps_sec_2; // drift in N direction
+
+  return;
+}
+
+void Navigation::updateNavByIMU() {
   // during no gps message integrate acc.
   float dt_sec, dt_sec_2;
   dt_sec = dt_AHRS_sec;       // sec
@@ -174,20 +186,15 @@ void Navigation::updateNavigation() {
   r_body_curr_ENU[1] = r_body_prev_ENU[1] +
                        v_body_prev_ENU[1] * dt_sec +
                        0.5 * acc_body_ENU[1] * dt_sec_2;
+  r_body_curr_ENU[2] = inc_h_baro; // always assume that barometer altitude is true
 
+  // estimate acc drift in U direction
   float r_body_integrated_U;
   r_body_integrated_U = r_body_prev_ENU[2] +
                        v_body_prev_ENU[2] * dt_sec +
                        0.5 * acc_body_ENU[2] * dt_sec_2;
 
-  a_drift_U = 2 * (r_body_integrated_U - inc_h_baro) / dt_sec / dt_sec; // acc drift in U
-
-  // correct navigation solution
-  r_body_curr_ENU[0] = r_body_curr_ENU[0];
-  r_body_curr_ENU[1] = r_body_curr_ENU[1];
-  r_body_curr_ENU[2] = inc_h_baro; // always assume that barometer altitude is true
-  
-
+  a_drift_U = 2 * (r_body_integrated_U - inc_h_baro) / dt_sec_2; // acc drift in U direction
   return;
 }
 

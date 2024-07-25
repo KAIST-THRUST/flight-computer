@@ -36,12 +36,15 @@ class Navigation {
     void updateGPSMeasurement(uint32_t t_ms, float* gps_data);
 
     void updateNavigation(); // update and estimate the best navigation solution
+    void updateNavByGPS(); // update navigation if new GPS data are available
+    void updateNavByIMU(); // update navigation using imu during no GPS input
 
     // private attributes
 
     // LPF
     LPF lpf_gyro[3] = {LPF(F_CUTOFF, T_S), LPF(F_CUTOFF, T_S), LPF(F_CUTOFF, T_S)}; // LPF for gyro data
     LPF lpf_bmp = LPF(F_CUTOFF, T_S); // LPF for barometer data
+    LPF lpf_acc[3] = {LPF(F_CUTOFF, T_S), LPF(F_CUTOFF, T_S), LPF(F_CUTOFF, T_S)}; // LPF for imu acc data
 
     /* Below parameters are calculated from the value specified in 'config.h' file. */
     // TU-1.f configuration
