@@ -83,8 +83,10 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
 
 void Navigation::updateBMPMeasurement(float p_baro_hPa) {
   // calculate altitude increment from pressure measurement
+  float p_baro_hPa_filtered = lpf_bmp.filter(p_baro_hPa);
+
   inc_h_baro = (R * atm_temp_launch_site / g0) *
-               log(atm_pressure_launch_site / p_baro_hPa); // m
+               log(atm_pressure_launch_site / p_baro_hPa_filtered); // m
 
   return;
 }
