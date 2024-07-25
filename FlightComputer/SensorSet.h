@@ -77,6 +77,7 @@ struct SensorSet {
     gps_sensor.begin(sensor_data_collection.gps_data);
     barometer_sensor.begin(sensor_data_collection.barometer_data);
     adc_sensor.begin(sensor_data_collection.adc_data);
+    delay(1000); // Wait for sensors to initialize.
   }
 };
 

@@ -18,11 +18,11 @@ None
 | Field Name     | Type | Size (Bytes) | Description |
 |----------------|----------------|--------------|-------------|
 | Current State  | `byte` | 1            | The current state of the flight computer. |
-| Time Stamp  | `uint32_t` | 4            | Sensor measurement time stamp. |
-| GPS Data  | `float` | 32            | lat, lon, alt, geoid, lat_ls, lon_ls, alt_ls, geoid_ls |
-| BNO055 Data | `float` | 40            | acc_x, acc_y, acc_z, g_x, g_y, g_z, q_x, q_y, q_z, q_w (all of them are imu raw measurements). |
-| BMP Data  | `float` | 16            | atm_p, atm_T, atm_p_ls, atm_T_ls. |
-| ADC Data | `float` | 8            | V_bat, P_chamber. |
+| Time Stamp  | `uint32_t` | 4            | Sensor measurement time stamp (ms). |
+| GPS Data  | `float` | 32            | lat (deg), lon (deg), alt (m), geoid (m), lat_ls (deg), lon_ls (deg), alt_ls (m), geoid_ls (m) |
+| BNO055 Data | `float` | 40            | acc_x (m/s2), acc_y (m/s2), acc_z (m/s2), g_x (rad/s), g_y (rad/s), g_z (rad/s), q_x, q_y, q_z, q_w (all of them are imu raw measurements). |
+| BMP Data  | `float` | 16            | atm_p (hPa), atm_T (degC), atm_p_ls (hPa), atm_T_ls (degC). |
+| ADC Data | `float` | 8            | V_bat (V), P_chamber (barg). |
 | Total Bytes    | - |101            | Total number of bytes in the table. |
 
 ### Ground Station -> Flight Computer
@@ -34,10 +34,10 @@ None
 | Field Name     | Type | Size (Bytes) | Description |
 |----------------|----------------|--------------|-------------|
 | Current State  | `byte` | 1            | The current state of the flight computer. |
-| Time Stamp  | `uint32_t` | 4            | Sensor measurement time stamp. |
+| Time Stamp  | `uint32_t` | 4            | Sensor measurement time stamp (ms). |
 | Attitude | `float` | 16 | q_x, q_y, q_z, q_w |
-| Nav Solution  | `float` | 24            | pos_E, pos_N, pos_U, vel_E, vel_N, vel_U |
-| ADC Data | `float` | 4            | P_chamber. |
+| Nav Solution  | `float` | 24            | pos_E (m), pos_N (m), pos_U (m), vel_E (m/s), vel_N (m/s), vel_U (m/s) |
+| ADC Data | `float` | 4            | P_chamber (barg). |
 | Total Bytes    | - | 49            | Total number of bytes in the table. |
 
 ### Ground Station -> Flight Computer
@@ -53,9 +53,9 @@ None
 | Field Name     | Type | Size (Bytes) | Description |
 |----------------|----------------|--------------|-------------|
 | Current State  | `byte` | 1            | The current state of the flight computer. |
-| Time Stamp  | `uint32_t`  | 4            | Sensor measurement time stamp. |
+| Time Stamp  | `uint32_t`  | 4            | Sensor measurement time stamp (ms). |
 | Attitude | `float` | 16 | q_x, q_y, q_z, q_w |
-| Nav Solution  | `float` | 24            | pos_E, pos_N, pos_U, vel_E, vel_N, vel_U |
+| Nav Solution  | `float` | 24            | pos_E (m), pos_N (m), pos_U (m), vel_E (m/s), vel_N (m/s), vel_U (m/s) |
 | Total Bytes    | - | 45            | Total number of bytes in the table. |
 
 ### Ground Station -> Flight Computer
@@ -70,9 +70,9 @@ None
 | Field Name     | Type | Size (Bytes) | Description |
 |----------------|----------------|--------------|-------------|
 | Current State  | `byte` | 1            | The current state of the flight computer. |
-| Time Stamp  | `uint32_t`  | 4            | Sensor measurement time stamp. |
+| Time Stamp  | `uint32_t`  | 4            | Sensor measurement time stamp (ms). |
 | Attitude | `float` | 16 | q_x, q_y, q_z, q_w |
-| Nav Solution  | `float` | 24            | pos_E, pos_N, pos_U, vel_E, vel_N, vel_U |
+| Nav Solution  | `float` | 24            | pos_E (m), pos_N (m), pos_U (m), vel_E (m/s), vel_N (m/s), vel_U (m/s) |
 | Total Bytes    | - | 45            | Total number of bytes in the table. |
 
 
@@ -85,8 +85,8 @@ None
 | Field Name     | Type | Size (Bytes) | Description |
 |----------------|----------------|--------------|-------------|
 | Current State  | `byte` | 1            | The current state of the flight computer. |
-| Time Stamp  | `uint32_t` | 4            | Sensor measurement time stamp. |
-| GPS | `float` | 16 | lat, lon, alt, geoid |
+| Time Stamp  | `uint32_t` | 4            | Sensor measurement time stamp (ms). |
+| GPS | `float` | 16 | lat (deg), lon (deg), alt (m), geoid (m) |
 | Total Bytes    | - | 21            | Total number of bytes in the table. |
 
 ### Ground Station -> Flight Computer
