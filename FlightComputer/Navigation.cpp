@@ -49,7 +49,7 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
               dcm_ENU_to_B); // get dcm_ENU_to_B from quat_ENU_to_B
   matrixTranspose(dcm_ENU_to_B,
                   dcm_B_to_ENU); // dcm_B_to_ENU = dcm_ENU_to_B^T
-  qf_gyro(((float)t_AHRS_msec)*0.001f,angular_rate_B,angular_rate_filtered_B,angular_acc_B);
+  qf_gyro.runFilter(((float)t_AHRS_msec)*0.001f,angular_rate_B,angular_rate_filtered_B,angular_acc_B);
 
   // angular_rate_filtered_B[0] = lpf_gyro[0].filter(angular_rate_B[0]);
   // angular_rate_filtered_B[1] = lpf_gyro[1].filter(angular_rate_B[1]);
