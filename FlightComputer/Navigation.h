@@ -5,6 +5,7 @@
 #include "config.h"
 #include "SensorSet.h"
 #include "SignalFilter.h"
+#include "Filter.h"
 
 struct ApogeeEstimate {
   float t_apogee; // sec
