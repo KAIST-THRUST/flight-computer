@@ -45,9 +45,9 @@ private:
 
   /* Logger. */
   DefaultLogFormatter log_formatter; // Log formatter for logging data.
-  SDManager sd_manager; // SD card manager for writing data.
-  SerialDevice hc12; // Serial device for writing data.
-  byte hc12_buffer[110]; // Buffer for HC12 communication device.
+  SDManager sd_manager;     // SD card manager for writing data.
+  SerialDevice hc12;        // Serial device for writing data.
+  byte hc12_buffer[110];    // Buffer for HC12 communication device.
   elapsedMillis hc12_timer; // Timer for HC12 communication device.
 
   /* Time related variables. */
@@ -56,6 +56,9 @@ private:
   /* Helper functions for state transition condition check. */
   bool shouldEject(SensorDataCollection &sensor_data_collection,
                    NavigationData &navigation_data);
+
+  /* Helper functions. */
+  void initializeNavigation();
 };
 
 #endif

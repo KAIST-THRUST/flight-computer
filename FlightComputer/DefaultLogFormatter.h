@@ -8,7 +8,7 @@
 class DefaultLogFormatter : public LogFormatter {
 public:
   const char *format(LogCategory category,
-                     const String &message) override {
+                     const char *message) override {
     const char *category_str = nullptr;
     switch (category) {
     case LogCategory::INFO:
@@ -17,6 +17,9 @@ public:
     case LogCategory::DATA:
       category_str = "DATA";
       break;
+    case LogCategory::WARNING:
+      category_str = "WARNING";
+      break;
     case LogCategory::ERROR:
       category_str = "ERROR";
       break;
@@ -24,8 +27,8 @@ public:
       category_str = "DEBUG";
       break;
     }
-    sprintf(buffer, "[%07lu] [%s] %s", millis(), category_str,
-            message.c_str());
+    sprintf(buffer, "[%07lu] [%s] %s\n", millis(), category_str,
+            message);
     return buffer;
   }
 
@@ -41,7 +44,7 @@ public:
             "[%07lu] [DATA]       Quat: (%.7f, %.7f, %.7f, %.7f)\n"
             "[%07lu] [DATA] [Bar] Pres: %.7f, Temp: %.7f\n"
             "[%07lu] [DATA] [Bar] Pres_AVG: %.7f, Temp_AVG: %.7f\n"
-            "[%07lu] [DATA] [ADC] Volt: %.7f, Pres: %.7f",
+            "[%07lu] [DATA] [ADC] Volt: %.7f, Pres: %.7f\n",
             data.current_time, data.gps_data[GPSSensor::LATITUDE],
             data.gps_data[GPSSensor::LONGITUDE],
             data.gps_data[GPSSensor::ALTITUDE],
@@ -75,7 +78,7 @@ public:
     sprintf(buffer,
             "[%07lu] [DATA] [NAV] pos: (%.7f, %.7f, %.7f)\n"
             "[%07lu] [DATA]       vel: (%.7f, %.7f, %.7f)\n"
-            "[%07lu] [DATA]       max_alt: %.7f",
+            "[%07lu] [DATA]       max_alt: %.7f\n",
             data.current_time, data.pos_ENU[0], data.pos_ENU[1],
             data.pos_ENU[2], data.current_time, data.vel_ENU[0],
             data.vel_ENU[1], data.vel_ENU[2], data.current_time,

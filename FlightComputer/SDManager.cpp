@@ -2,15 +2,17 @@
 
 SDManager::SDManager() : file_opened(false), file_name(FILE_NAME) {}
 
-void SDManager::begin(String file_name) {
+bool SDManager::begin(String file_name) {
   this->file_name = file_name;
   if (!SD.begin(BUILTIN_SDCARD)) {
     printErrorMessageToSerial("SD card initialization failed!");
-    return;
+    is_available = false;
+    return false;
   }
+  is_available = true;
   open();
-  file_opened = true;
   close();
+  return true;
 }
 
 void SDManager::write(const String &data) {

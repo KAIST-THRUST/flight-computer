@@ -29,21 +29,44 @@ StateMachine::StateMachine()
       hc12(HC12_SERIAL, &log_formatter) {}
 
 void StateMachine::begin() {
+  /* Get execution initial time. */
   rtc.begin();
-  Serial.begin(BAUD_RATE);
-  Serial.println("Hello World!"); // serial monitor test.
-  hc12.begin();
-  servo.begin();
-  sensor_set.beginAll();
-  delay(1000); // Wait for sensors to initialize.
   const TimeData &time_data = rtc.getTimeData();
-  Serial.print(log_formatter.format(LogCategory::INFO, time_data));
-  String file_name_time = String(time_data) + ".txt";
-  Serial.println(" First rocket drop test.");
-  sd_manager.begin(file_name_time);
+
+  /* Create file name with current time. */
+  char file_name_time[50];
+  time_data.toString(file_name_time);
+
+  /* Initialize main serial and print initial message. */
+  Serial.begin(BAUD_RATE);
+  Serial.print(log_formatter.format(LogCategory::INFO, file_name_time));
+  Serial.print(
+      log_formatter.format(LogCategory::INFO, "Start system."));
+
+  servo.begin();         // Initialize servo motor.
+  sensor_set.beginAll(); // Initialize all sensors.
+  Serial.print(log_formatter.format(LogCategory::INFO,
+                                    "All sensors initialized."));
+
+  hc12.begin();
+
+  /* Loop until SD card is properly initialized. */
+  strcat(file_name_time, ".txt"); // Append .txt to file name.
+  Serial.print(
+      log_formatter.format(LogCategory::INFO, "Waiting for SD card."));
+  while (!sd_manager.begin(file_name_time)) {
+    Serial.print(log_formatter.format(LogCategory::WARNING,
+                                      "SD card failed to initialize."));
+    delay(1000);
+  }
+  Serial.print(
+      log_formatter.format(LogCategory::INFO, "SD card initialized."));
+
   sd_manager.write("Hello World!"); // SD card test.
   memcpy(hc12_buffer, &rocket_current_state, 1);
   delay(5000);
+  Serial.print(
+      log_formatter.format(LogCategory::INFO, "Switch to BOOT"));
 }
 
 void StateMachine::boot() {
@@ -52,13 +75,14 @@ void StateMachine::boot() {
     hc12.writeRaw(hc12_buffer, 1);
     hc12_timer -= 10;
   }
-  if (sensor_set.gps_sensor.isValid() || millis() > S_TO_MS(BOOT_TIME)) {
+  if (sensor_set.gps_sensor.isValid() ||
+      millis() > S_TO_MS(BOOT_TIME)) {
     rocket_current_state = RocketState::ST_STAND_BY;
     memcpy(hc12_buffer, &rocket_current_state, 1);
     initial_fix_time = 0;
-    Serial.println(
+    Serial.print(
         log_formatter.format(LogCategory::INFO, "All Sensors fixed."));
-    Serial.println(
+    Serial.print(
         log_formatter.format(LogCategory::INFO, "Switch to STAND_BY"));
   }
 }
@@ -85,9 +109,10 @@ void StateMachine::standBy() {
     }
 
     /* Logging sensor data to Serial. */
-    Serial.println(log_formatter.format(sensor_data_collection));
+    Serial.print(log_formatter.format(sensor_data_collection));
     sd_manager.write(log_formatter.format(sensor_data_collection));
 
+    /* Construct HC12 buffer and write to HC12. */
     memcpy(hc12_buffer, &rocket_current_state, 1);
     memcpy(hc12_buffer + 1, &sensor_data_collection.current_time, 4);
     for (int i = 0; i < 8; i++) {
@@ -112,17 +137,9 @@ void StateMachine::standBy() {
     }
   }
   if (initial_fix_time >= S_TO_MS(30)) {
-    navigation.initializeLaunchSiteConfig(
-        sensor_data_collection.gps_data[GPSSensor::LATITUDE_LS],
-        sensor_data_collection.gps_data[GPSSensor::LONGITUDE_LS],
-        sensor_data_collection.gps_data[GPSSensor::ALTITUDE_LS],
-        sensor_data_collection.gps_data[GPSSensor::GEOID_HEIGHT_LS],
-        sensor_data_collection
-            .barometer_data[BarometerSensor::PRESSURE_AVG],
-        sensor_data_collection
-            .barometer_data[BarometerSensor::TEMPERATURE_AVG]);
+    initializeNavigation();
     rocket_current_state = RocketState::ST_BURN;
-    Serial.println(
+    Serial.print(
         log_formatter.format(LogCategory::INFO, "Switch to BURN"));
   }
 }
@@ -130,7 +147,7 @@ void StateMachine::standBy() {
 void StateMachine::burn() {
   if (true) {
     rocket_current_state = RocketState::ST_COAST;
-    Serial.println(
+    Serial.print(
         log_formatter.format(LogCategory::INFO, "Switch to COAST"));
   }
 }
@@ -155,8 +172,8 @@ void StateMachine::coast() {
         max(navigation_data.max_altitude, navigation_data.pos_ENU[2]);
 
     /* Logging sensor data to Serial. */
-    Serial.println(log_formatter.format(sensor_data_collection));
-    Serial.println(log_formatter.format(navigation_data));
+    Serial.print(log_formatter.format(sensor_data_collection));
+    Serial.print(log_formatter.format(navigation_data));
 
     /* Writing raw data to SD card. */
     sd_manager.write(log_formatter.format(sensor_data_collection));
@@ -167,8 +184,8 @@ void StateMachine::coast() {
     if (!servo.isrotating()) {
       servo.rotate(90);
     }
-    Serial.println(log_formatter.format(
-        LogCategory::INFO, "Ejection mechanism activated."));
+    Serial.print(log_formatter.format(LogCategory::INFO,
+                                      "Ejection mechanism activated."));
     sd_manager.write(log_formatter.format(
         LogCategory::INFO, "Ejection mechanism activated."));
     rocket_current_state = RocketState::ST_DESCENT;
@@ -190,7 +207,7 @@ void StateMachine::descend() {
     navigation.update(sensor_data_collection);
 
     /* Logging sensor data to Serial. */
-    Serial.println(log_formatter.format(sensor_data_collection));
+    Serial.print(log_formatter.format(sensor_data_collection));
 
     /* Writing raw data to SD card. */
     sd_manager.write(log_formatter.format(sensor_data_collection));
@@ -205,4 +222,16 @@ bool StateMachine::shouldEject(
 
   // bool isTimeToEject = millis() > 2 * 1000; // 2 seconds after launch
   return isDescenting;
+}
+
+void StateMachine::initializeNavigation() {
+  navigation.initializeLaunchSiteConfig(
+      sensor_data_collection.gps_data[GPSSensor::LATITUDE_LS],
+      sensor_data_collection.gps_data[GPSSensor::LONGITUDE_LS],
+      sensor_data_collection.gps_data[GPSSensor::ALTITUDE_LS],
+      sensor_data_collection.gps_data[GPSSensor::GEOID_HEIGHT_LS],
+      sensor_data_collection
+          .barometer_data[BarometerSensor::PRESSURE_AVG],
+      sensor_data_collection
+          .barometer_data[BarometerSensor::TEMPERATURE_AVG]);
 }

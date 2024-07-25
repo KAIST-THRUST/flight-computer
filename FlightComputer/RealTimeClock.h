@@ -19,11 +19,9 @@ struct TimeData {
   int second;
   uint32_t millis;
 
-  operator String() const {
-    char buffer[50];
+  void toString(char *buffer) const {
     sprintf(buffer, "%d-%02d-%02d %02d-%02d-%02d", year, month, day,
             hour, minute, second);
-    return String(buffer);
   }
 };
 

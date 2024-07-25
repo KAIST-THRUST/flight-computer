@@ -15,7 +15,7 @@
 class SDManager {
 public:
   SDManager();
-  void begin(String file_name = FILE_NAME); // Initialize SD card.
+  bool begin(String file_name = FILE_NAME); // Initialize SD card.
   void write(const String &data);           // Write data to SD card.
   void open();                              // Open the file.
   void close();                             // Close the file.
@@ -25,6 +25,7 @@ private:
   bool file_opened;
   elapsedMillis timer;
   String file_name;
+  bool is_available;
 };
 
 #endif
