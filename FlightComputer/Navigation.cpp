@@ -75,9 +75,13 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
                cross_w_cross_w_r_imu_B);
 
   float acc_imu_B_filtered[3];
-  acc_imu_B_filtered[0] = lpf_acc[0].filter(acc_imu_B[0]);
-  acc_imu_B_filtered[1] = lpf_acc[1].filter(acc_imu_B[1]);
-  acc_imu_B_filtered[2] = lpf_acc[2].filter(acc_imu_B[2]);
+  float dummyArray[3]
+
+  qf_acc.runFilter(((float)t_AHRS_msec)*0.001f,acc_imu_B,acc_imu_B_filtered,dummyArray);
+
+  // acc_imu_B_filtered[0] = lpf_acc[0].filter(acc_imu_B[0]);
+  // acc_imu_B_filtered[1] = lpf_acc[1].filter(acc_imu_B[1]);
+  // acc_imu_B_filtered[2] = lpf_acc[2].filter(acc_imu_B[2]);
 
   acc_body_B[0] = acc_imu_B_filtered[0] - cross_w_dot_r_imu_B[0] -
                   cross_w_cross_w_r_imu_B[0];
