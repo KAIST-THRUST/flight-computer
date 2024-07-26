@@ -41,6 +41,7 @@ void QuadraticFilter::runFilter(float time, float input[3], float output[3], flo
     float legacyTime;
     float legacyData[3];
     float det3, det2;
+    // queue pop&push
     legacyTime = this->sample[0][this->sample_number];
     legacyData[0] = this->sample[1][this->sample_number];
     legacyData[1] = this->sample[2][this->sample_number];
@@ -49,6 +50,7 @@ void QuadraticFilter::runFilter(float time, float input[3], float output[3], flo
     this->sample[1][this->sample_number] = input[0];
     this->sample[2][this->sample_number] = input[1];
     this->sample[3][this->sample_number] = input[2];
+    // Calculating A'*A,A'*B
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -71,6 +73,7 @@ void QuadraticFilter::runFilter(float time, float input[3], float output[3], flo
             this->tempMatrix_AB2[i][j] += pow(time, i) * input[j] - pow(legacyTime, i) * legacyData[j];
         }
     }
+    //calculate inv(A'*A)
     det3 = 0;
     for (int i = 0; i < 3; i++)
     {
@@ -91,6 +94,7 @@ void QuadraticFilter::runFilter(float time, float input[3], float output[3], flo
             this->tempMatrix_AA2I[j][i] = tempMatrix_AA2[1 - i][1 - j] * pow(-1, i + j) / det2;
         }
     }
+    // Calculate inv(A'*A)*A'*B
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -113,6 +117,7 @@ void QuadraticFilter::runFilter(float time, float input[3], float output[3], flo
             }
         }
     }
+    // Get solution
     for (int i = 0; i < 3; i++)
     {
         diff[i] = resultMatrix_L[1][i];
@@ -134,6 +139,7 @@ void QuadraticFilter::runFilter(float time, float input[3], float output[3], flo
     {
         prevData[i] = output[i];
     }
+    // Mixing sample with filtered ones
     for (int i = 0; i < 3; i++)
     {
         this->sample[i + 1][this->sample_number] = input[i] * zeta + output[i] * (1 - zeta);

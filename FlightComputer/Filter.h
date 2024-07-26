@@ -23,6 +23,9 @@ private:
     int batch_size, sample_number;
     float prevData[3] = {0};
     float alpha, beta, zeta;
+    // alpha is for LPF after QF
+    // beta is mix rate of QF and LF
+    // zeta is mix rate of sample, raw of filtered
 };
 
 class LPF
