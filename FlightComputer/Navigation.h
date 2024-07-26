@@ -4,7 +4,6 @@
 #include "util.h"
 #include "config.h"
 #include "SensorSet.h"
-#include "SignalFilter.h"
 #include "Filter.h"
 
 struct ApogeeEstimate {
