@@ -79,7 +79,7 @@ void StateMachine::boot() {
   }
 
   /* Check if all sensors are fixed. */
-  if (sensor_set.isValid() || since_boot > S_TO_MS(30)) {
+  if (sensor_set.isValid()) {
     rocket_current_state = RocketState::ST_STAND_BY;
     memcpy(hc12_buffer, &rocket_current_state, 1);
     since_fix = 0;
@@ -136,8 +136,7 @@ void StateMachine::standBy() {
   }
 
   /* Check if the rocket is in BURN state. */
-  if (sensor_data_collection.adc_data[ADCSensor::PRESSURE] > 0.5 ||
-      since_fix > S_TO_MS(30)) {
+  if (sensor_data_collection.adc_data[ADCSensor::PRESSURE] > 0.5) {
     since_burn = 0;
     initializeNavigation();
     rocket_current_state = RocketState::ST_BURN;
@@ -172,8 +171,7 @@ void StateMachine::burn() {
   }
 
   /* Check if the rocket is in COAST state. */
-  if (sensor_data_collection.adc_data[ADCSensor::PRESSURE] < 1.0 ||
-      since_burn > S_TO_MS(3)) {
+  if (sensor_data_collection.adc_data[ADCSensor::PRESSURE] < 1.0) {
     rocket_current_state = RocketState::ST_COAST;
     Serial.print(
         log_formatter.format(LogCategory::INFO, "Switch to COAST"));
