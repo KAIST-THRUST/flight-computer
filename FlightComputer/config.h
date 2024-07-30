@@ -36,10 +36,10 @@ extern enum RocketState rocket_current_state;
 #define F_CUTOFF 5 // Cutoff frequency of low pass filter, in Hz
 
 // Quadratic Filter Config
-#define Q_ALPHA 0.1
+#define Q_ALPHA 0.3
 #define Q_BETA 0.37
 #define Q_ZETA 0.37
-#define Q_BATCH_SIZE 30
+#define Q_BATCH_SIZE 10
 
 // TU-1.f Vehicle Config
 #define M_DRY 3.7 // Dry mass of the vehicle after burnout, in kg
@@ -74,9 +74,9 @@ extern enum RocketState rocket_current_state;
 #define FILE_NAME "sensor_data.txt" // File name to store sensor data.
 
 /* HC12 configuration. */
-#define HC12_SERIAL Serial1  // Serial name connected to HC12.
-#define HC12_BAUD_RATE 9600  // Baud rate of HC12.
-#define HC12_SAMPLING_RATE 1 // HC12 sampling rate, in Hz.
+#define HC12_SERIAL Serial1   // Serial name connected to HC12.
+#define HC12_BAUD_RATE 9600   // Baud rate of HC12.
+#define HC12_SAMPLING_RATE 10 // HC12 sampling rate, in Hz.
 
 /*-------------------------------------------------------------------*/
 

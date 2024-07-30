@@ -173,6 +173,10 @@ LPF::LPF(float f_cutoff_Hz, float dt) : cutoffFrequency_(f_cutoff_Hz), prevOutpu
 
 float LPF::filter(float input)
 {
+    if(isInitialized_ == 0){
+        prevOutput_ = input;
+        isInitialized_ = 1;
+    }
     float output = (1 - alpha_) * prevOutput_ + alpha_ * input;
     prevOutput_ = output;
     return output;

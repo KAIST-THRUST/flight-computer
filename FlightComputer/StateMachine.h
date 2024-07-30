@@ -51,14 +51,18 @@ private:
   elapsedMillis hc12_timer; // Timer for HC12 communication device.
 
   /* Time related variables. */
-  elapsedMillis initial_fix_time; // Time elapsed since initial fix.
+  elapsedMillis since_boot; // Time elapsed since booting started.
+  elapsedMillis since_fix;  // Time elapsed since initial fix.
+  elapsedMillis since_burn; // Time elapsed since burn started.
 
   /* Helper functions for state transition condition check. */
-  bool shouldEject(SensorDataCollection &sensor_data_collection,
-                   NavigationData &navigation_data);
+  bool shouldEject();
 
   /* Helper functions. */
-  void initializeNavigation();
+  void initializeNavigation();    // Initialize navigation data.
+  void updateNavigation();        // Update navigation data.
+  void updateSensorData();        // Update sensor data.
+  void updateAverageSensorData(); // Update average sensor data.
 };
 
 #endif

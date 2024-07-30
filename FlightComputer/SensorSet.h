@@ -79,6 +79,10 @@ struct SensorSet {
     adc_sensor.begin(sensor_data_collection.adc_data);
     delay(1000); // Wait for sensors to initialize.
   }
+
+  bool isValid() {
+    return gps_sensor.isValid();
+  }
 };
 
 #endif

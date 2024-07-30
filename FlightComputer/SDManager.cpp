@@ -5,7 +5,7 @@ SDManager::SDManager() : file_opened(false), file_name(FILE_NAME) {}
 bool SDManager::begin(String file_name) {
   this->file_name = file_name;
   if (!SD.begin(BUILTIN_SDCARD)) {
-    printErrorMessageToSerial("SD card initialization failed!");
+    // printErrorMessageToSerial("SD card initialization failed!");
     is_available = false;
     return false;
   }
@@ -19,7 +19,7 @@ void SDManager::write(const String &data) {
   /* If file is not opened, open it. */
   open();
 
-  file.println(data); // Write data to file.
+  file.print(data); // Write data to file.
 
   /* Close and reopen file every 60 seconds. */
   if (file_opened && timer > 60 * 1000) {

@@ -39,6 +39,7 @@ private:
     float prevOutput_;      // Previous output of the filter
     float dt_;              // Time step for the filter
     float alpha_;           // Coefficient for the filter
+    int isInitialized_ = 0;   // Initialization flag
 };
 
 #endif

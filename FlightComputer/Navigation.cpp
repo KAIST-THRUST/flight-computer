@@ -78,6 +78,9 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
   float dummyArray[3];
 
   qf_acc.runFilter(((float)t_AHRS_msec)*0.001f,acc_imu_B,acc_imu_B_filtered,dummyArray);
+  // Serial.println(acc_imu_B_filtered[0]);
+  // Serial.println(acc_imu_B_filtered[1]);
+  // Serial.println(acc_imu_B_filtered[2]);
 
   // acc_imu_B_filtered[0] = lpf_acc[0].filter(acc_imu_B[0]);
   // acc_imu_B_filtered[1] = lpf_acc[1].filter(acc_imu_B[1]);
@@ -95,7 +98,7 @@ void Navigation::updateAHRSMeasurement(uint32_t t_ms, float *imu_data) {
   // drift correction
   acc_body_ENU[0] -= a_drift_E;
   acc_body_ENU[1] -= a_drift_N;
-  acc_body_ENU[2] -= a_drift_U;
+  // acc_body_ENU[2] -= a_drift_U;
 
   return;
 }
@@ -177,8 +180,8 @@ void Navigation::updateNavByGPS() {
   // estimate drifts in E and N directions
   float dt_gps_sec = (t_gps_msec - t_gps_prev_msec) * 0.001f; // sec
   float dt_gps_sec_2 = dt_gps_sec * dt_gps_sec; // sec2
-  a_drift_E = 2*(r_body_prev_ENU[0] - r_body_curr_ENU[0]) / dt_gps_sec_2; // drift in E direction
-  a_drift_N = 2*(r_body_prev_ENU[1] - r_body_curr_ENU[1]) / dt_gps_sec_2; // drift in N direction
+  a_drift_E = (v_body_prev_ENU[0] - v_body_curr_ENU[0]) / dt_gps_sec*0.1 + a_drift_E*0.9; // drift in E direction
+  a_drift_N = (v_body_prev_ENU[1] - v_body_curr_ENU[1]) / dt_gps_sec*0.1+a_drift_N*0.9; // drift in N direction
 
   return;
 }

@@ -37,6 +37,7 @@ void loop() {
 
   case RocketState::ST_DESCENT:
     /* Descent state. */
+    rocket_state_machine.descend();
     break;
 
   case RocketState::ST_LANDED:

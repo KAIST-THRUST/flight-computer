@@ -30,6 +30,7 @@ public:
 
   void writeRaw(const byte *data, size_t length) override {
     serial.write(data, length);
+    serial.flush();
   }
 
   bool available() override { return serial.available(); }
