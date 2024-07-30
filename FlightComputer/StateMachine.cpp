@@ -37,6 +37,10 @@ void StateMachine::begin() {
   char file_name_time[50];
   time_data.toString(file_name_time);
 
+  /* Initialize built-in LED for status check. */
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH); // LED is on until standby state.
+
   /* Initialize main serial and print initial message. */
   Serial.begin(BAUD_RATE);
   Serial.print(log_formatter.format(LogCategory::INFO, file_name_time));
@@ -81,6 +85,7 @@ void StateMachine::boot() {
   /* Check if all sensors are fixed. */
   if (sensor_set.isValid()) {
     rocket_current_state = RocketState::ST_STAND_BY;
+    digitalWrite(LED_BUILTIN, LOW); // Turn off LED.
     memcpy(hc12_buffer, &rocket_current_state, 1);
     since_fix = 0;
     Serial.print(
@@ -237,6 +242,7 @@ void StateMachine::descend() {
 
     /* Writing raw data to SD card. */
     sd_manager.write(log_formatter.format(sensor_data_collection));
+    sd_manager.write(log_formatter.format(navigation_data));
   }
 }
 
