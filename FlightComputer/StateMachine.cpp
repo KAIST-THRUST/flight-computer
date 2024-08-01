@@ -77,10 +77,7 @@ void StateMachine::begin() {
 
 void StateMachine::boot() {
   sensor_set.gps_sensor.update();
-  if (hc12_timer > 1000 / HC12_SAMPLING_RATE) {
-    hc12.writeRaw(hc12_buffer, 1);
-    hc12_timer -= 1000 / HC12_SAMPLING_RATE;
-  }
+  sendDataToHc12();
 
   /* Check if all sensors are fixed. */
   if (sensor_set.isValid()) {
@@ -116,28 +113,7 @@ void StateMachine::standBy() {
     sd_manager.write(log_formatter.format(sensor_data_collection));
 
     /* Construct HC12 buffer and write to HC12. */
-    memcpy(hc12_buffer, &rocket_current_state, 1);
-    // memcpy(hc12_buffer + 1, &sensor_data_collection.current_time, 4);
-    // for (int i = 0; i < 8; i++) {
-    //   memcpy(hc12_buffer + 5 + i * 4,
-    //          &sensor_data_collection.gps_data[i], 4);
-    // }
-    // for (int i = 0; i < 10; i++) {
-    //   memcpy(hc12_buffer + 37 + i * 4,
-    //          &sensor_data_collection.imu_data[i], 4);
-    // }
-    // for (int i = 0; i < 4; i++) {
-    //   memcpy(hc12_buffer + 77 + i * 4,
-    //          &sensor_data_collection.barometer_data[i], 4);
-    // }
-    // for (int i = 0; i < 2; i++) {
-    //   memcpy(hc12_buffer + 93 + i * 4,
-    //          &sensor_data_collection.adc_data[i], 4);
-    // }
-    if (hc12_timer > 1000 / HC12_SAMPLING_RATE) {
-      hc12.writeRaw(hc12_buffer, 1);
-      hc12_timer -= 1000 / HC12_SAMPLING_RATE;
-    }
+    sendDataToHc12();
   }
 
   /* Check if the rocket is in BURN state. */
@@ -173,6 +149,9 @@ void StateMachine::burn() {
     /* Writing raw data to SD card. */
     sd_manager.write(log_formatter.format(sensor_data_collection));
     sd_manager.write(log_formatter.format(navigation_data));
+
+    /* Sending raw data using HC12. */
+    sendDataToHc12();
   }
 
   /* Check if the rocket is in COAST state. */
@@ -206,6 +185,9 @@ void StateMachine::coast() {
     /* Writing raw data to SD card. */
     sd_manager.write(log_formatter.format(sensor_data_collection));
     sd_manager.write(log_formatter.format(navigation_data));
+
+    /* Sending raw data using HC12. */
+    sendDataToHc12();
   }
 
   /* Check if the rocket is in DESCENT state. */
@@ -243,6 +225,9 @@ void StateMachine::descend() {
     /* Writing raw data to SD card. */
     sd_manager.write(log_formatter.format(sensor_data_collection));
     sd_manager.write(log_formatter.format(navigation_data));
+
+    /* Sending raw data using HC12. */
+    sendDataToHc12();
   }
 }
 
@@ -282,4 +267,14 @@ void StateMachine::updateAverageSensorData() {
   gps_geoid_height_ls.update();
   bar_pressure_avg.update();
   bar_temperature_avg.update();
+}
+
+void StateMachine::sendDataToHc12() {
+  if (since_transmit > 1000 / HC12_SAMPLING_RATE) {
+    memcpy(hc12_buffer, &rocket_current_state, 1);
+    memcpy(hc12_buffer + 1, &navigation_data.pos_ENU[2], 4);
+
+    hc12.writeRaw(hc12_buffer, 5);
+    since_transmit -= 1000 / HC12_SAMPLING_RATE;
+  }
 }

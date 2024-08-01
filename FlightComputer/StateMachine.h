@@ -45,10 +45,10 @@ private:
 
   /* Logger. */
   DefaultLogFormatter log_formatter; // Log formatter for logging data.
-  SDManager sd_manager;     // SD card manager for writing data.
-  SerialDevice hc12;        // Serial device for writing data.
-  byte hc12_buffer[110];    // Buffer for HC12 communication device.
-  elapsedMillis hc12_timer; // Timer for HC12 communication device.
+  SDManager sd_manager;         // SD card manager for writing data.
+  SerialDevice hc12;            // Serial device for writing data.
+  byte hc12_buffer[110];        // Buffer for HC12 communication device.
+  elapsedMillis since_transmit; // Timer for HC12 communication device.
 
   /* Time related variables. */
   elapsedMillis since_boot; // Time elapsed since booting started.
@@ -63,6 +63,7 @@ private:
   void updateNavigation();        // Update navigation data.
   void updateSensorData();        // Update sensor data.
   void updateAverageSensorData(); // Update average sensor data.
+  void sendDataToHc12();          // Send data to HC12.
 };
 
 #endif

@@ -14,9 +14,9 @@ struct ApogeeEstimate {
 
 struct NavigationData {
   uint32_t current_time;
-  float pos_ENU[3]; // m, position in ENU
-  float vel_ENU[3]; // m/s, velocity in ENU
-  float max_altitude; // m, maximum altitude
+  float pos_ENU[3] = {0}; // m, position in ENU
+  float vel_ENU[3] = {0}; // m/s, velocity in ENU
+  float max_altitude = 0; // m, maximum altitude
 };
 
 class Navigation {
