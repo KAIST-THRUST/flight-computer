@@ -56,7 +56,10 @@ private:
   elapsedMillis since_burn; // Time elapsed since burn started.
 
   /* Helper functions for state transition condition check. */
+  bool shouldChangeToBurn();
+  bool shouldChangeToCoast();
   bool shouldEject();
+  bool shouldChangeToLanded();
 
   /* Helper functions. */
   void initializeNavigation();    // Initialize navigation data.

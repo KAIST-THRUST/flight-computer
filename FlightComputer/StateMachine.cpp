@@ -73,6 +73,10 @@ void StateMachine::begin() {
   sd_manager.write(
       log_formatter.format(LogCategory::INFO, "Switch to BOOT"));
   since_boot = 0;
+
+#ifdef FC_DEBUG_ENABLED
+  navigation_data.pos_ENU[2] = 3.14f; // For testing.
+#endif
 }
 
 void StateMachine::boot() {
@@ -109,7 +113,9 @@ void StateMachine::standBy() {
     }
 
     /* Logging sensor data. */
-    // Serial.print(log_formatter.format(sensor_data_collection));
+#ifdef FC_DEBUG_ENABLED
+    Serial.print(log_formatter.format(sensor_data_collection));
+#endif
     sd_manager.write(log_formatter.format(sensor_data_collection));
 
     /* Construct HC12 buffer and write to HC12. */
@@ -117,7 +123,7 @@ void StateMachine::standBy() {
   }
 
   /* Check if the rocket is in BURN state. */
-  if (sensor_data_collection.adc_data[ADCSensor::PRESSURE] > 0.5) {
+  if (shouldChangeToBurn()) {
     since_burn = 0;
     initializeNavigation();
     rocket_current_state = RocketState::ST_BURN;
@@ -143,9 +149,10 @@ void StateMachine::burn() {
     updateNavigation();
 
     /* Logging sensor data to Serial. */
-    // Serial.print(log_formatter.format(sensor_data_collection));
-    // Serial.print(log_formatter.format(navigation_data));
-
+#ifdef FC_DEBUG_ENABLED
+    Serial.print(log_formatter.format(sensor_data_collection));
+    Serial.print(log_formatter.format(navigation_data));
+#endif
     /* Writing raw data to SD card. */
     sd_manager.write(log_formatter.format(sensor_data_collection));
     sd_manager.write(log_formatter.format(navigation_data));
@@ -155,7 +162,7 @@ void StateMachine::burn() {
   }
 
   /* Check if the rocket is in COAST state. */
-  if (sensor_data_collection.adc_data[ADCSensor::PRESSURE] < 1.0) {
+  if (shouldChangeToCoast()) {
     rocket_current_state = RocketState::ST_COAST;
     Serial.print(
         log_formatter.format(LogCategory::INFO, "Switch to COAST"));
@@ -179,9 +186,10 @@ void StateMachine::coast() {
     updateNavigation();
 
     /* Logging sensor data to Serial. */
-    // Serial.print(log_formatter.format(sensor_data_collection));
-    // Serial.print(log_formatter.format(navigation_data));
-
+#ifdef FC_DEBUG_ENABLED
+    Serial.print(log_formatter.format(sensor_data_collection));
+    Serial.print(log_formatter.format(navigation_data));
+#endif
     /* Writing raw data to SD card. */
     sd_manager.write(log_formatter.format(sensor_data_collection));
     sd_manager.write(log_formatter.format(navigation_data));
@@ -220,8 +228,9 @@ void StateMachine::descend() {
     updateNavigation();
 
     /* Logging sensor data to Serial. */
-    // Serial.print(log_formatter.format(sensor_data_collection));
-
+#ifdef FC_DEBUG_ENABLED
+    Serial.print(log_formatter.format(sensor_data_collection));
+#endif
     /* Writing raw data to SD card. */
     sd_manager.write(log_formatter.format(sensor_data_collection));
     sd_manager.write(log_formatter.format(navigation_data));
@@ -229,6 +238,22 @@ void StateMachine::descend() {
     /* Sending raw data using HC12. */
     sendDataToHc12();
   }
+}
+
+bool StateMachine::shouldChangeToBurn() {
+#ifdef FC_TEST_ENABLED
+  return since_fix > S_TO_MS(30);
+#else
+  return sensor_data_collection.adc_data[ADCSensor::PRESSURE] > 0.5;
+#endif
+}
+
+bool StateMachine::shouldChangeToCoast() {
+#ifdef FC_TEST_ENABLED
+  return true;
+#else
+  return sensor_data_collection.adc_data[ADCSensor::PRESSURE] < 1.0;
+#endif
 }
 
 bool StateMachine::shouldEject() {

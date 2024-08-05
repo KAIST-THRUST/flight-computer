@@ -22,6 +22,8 @@ extern enum RocketState rocket_current_state;
 
 /*-------------------------------------------------------------------*/
 /* Define or modify the configurations here if you want. */
+#define FC_DEBUG_ENABLED // Enable debug mode.
+#define FC_TEST_ENABLED  // Enable test mode.
 
 /* Basic configurations. */
 #define BAUD_RATE 115200  // Baud rate of the main serial port.
@@ -72,6 +74,7 @@ extern enum RocketState rocket_current_state;
 
 /* SD card configurations. */
 #define FILE_NAME "sensor_data.txt" // File name to store sensor data.
+#define LOG_FILE_SIZE (150 * SAMPLING_RATE * 60 * 60) // File size.
 
 /* HC12 configuration. */
 #define HC12_SERIAL Serial1   // Serial name connected to HC12.

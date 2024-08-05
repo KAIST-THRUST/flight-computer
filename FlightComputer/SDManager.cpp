@@ -35,7 +35,9 @@ void SDManager::open() {
   if (!file_opened) {
     file = SD.open(file_name.c_str(), FILE_WRITE);
     if (!file) {
+#ifdef FC_DEBUG_ENABLED
       printErrorMessageToSerial("File open failed!");
+#endif
       return;
     }
     file_opened = true;
