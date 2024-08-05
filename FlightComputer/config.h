@@ -74,7 +74,7 @@ extern enum RocketState rocket_current_state;
 
 /* SD card configurations. */
 #define FILE_NAME "sensor_data.txt" // File name to store sensor data.
-#define LOG_FILE_SIZE (150 * SAMPLING_RATE * 60 * 60) // File size.
+#define LOG_FILE_SIZE (50 * 1024 * 1024) // File size.
 
 /* HC12 configuration. */
 #define HC12_SERIAL Serial1   // Serial name connected to HC12.

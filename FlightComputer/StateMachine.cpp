@@ -26,7 +26,7 @@ StateMachine::StateMachine()
                .barometer_data[BarometerSensor::TEMPERATURE],
           &sensor_data_collection
                .barometer_data[BarometerSensor::TEMPERATURE_AVG]),
-      hc12(HC12_SERIAL, &log_formatter) {}
+      hc12(HC12_SERIAL, &log_formatter), sd_device(&log_formatter) {}
 
 void StateMachine::begin() {
   /* Get execution initial time. */
@@ -58,23 +58,22 @@ void StateMachine::begin() {
   strcat(file_name_time, ".txt"); // Append .txt to file name.
   Serial.print(
       log_formatter.format(LogCategory::INFO, "Waiting for SD card."));
-  /* Loop until SD card is properly initialized. */
-  while (!sd_manager.begin(file_name_time)) {
-    delay(1000);
-  }
+  sd_device.setFileName(file_name_time);
+  sd_device.begin();
+
   Serial.print(
       log_formatter.format(LogCategory::INFO, "SD card initialized."));
 
-  sd_manager.write("Static fire test.\n"); // SD card test.
+  // sd_manager.write("Static fire test.\n"); // SD card test.
+  sd_device.write(LogCategory::INFO, "Static fire test.\n");
   memcpy(hc12_buffer, &rocket_current_state, 1);
   delay(5000);
   Serial.print(
       log_formatter.format(LogCategory::INFO, "Switch to BOOT"));
-  sd_manager.write(
-      log_formatter.format(LogCategory::INFO, "Switch to BOOT"));
+  sd_device.write(LogCategory::INFO, "Switch to BOOT");
   since_boot = 0;
 
-#ifdef FC_DEBUG_ENABLED
+#ifdef FC_TEST_ENABLED
   navigation_data.pos_ENU[2] = 3.14f; // For testing.
 #endif
 }
@@ -116,7 +115,7 @@ void StateMachine::standBy() {
 #ifdef FC_DEBUG_ENABLED
     Serial.print(log_formatter.format(sensor_data_collection));
 #endif
-    sd_manager.write(log_formatter.format(sensor_data_collection));
+    sd_device.write(sensor_data_collection);
 
     /* Construct HC12 buffer and write to HC12. */
     sendDataToHc12();
@@ -129,8 +128,7 @@ void StateMachine::standBy() {
     rocket_current_state = RocketState::ST_BURN;
     Serial.print(
         log_formatter.format(LogCategory::INFO, "Switch to BURN"));
-    sd_manager.write(
-        log_formatter.format(LogCategory::INFO, "Switch to BURN"));
+    sd_device.write(LogCategory::INFO, "Switch to BURN");
   }
 }
 
@@ -154,8 +152,8 @@ void StateMachine::burn() {
     Serial.print(log_formatter.format(navigation_data));
 #endif
     /* Writing raw data to SD card. */
-    sd_manager.write(log_formatter.format(sensor_data_collection));
-    sd_manager.write(log_formatter.format(navigation_data));
+    sd_device.write(sensor_data_collection);
+    sd_device.write(navigation_data);
 
     /* Sending raw data using HC12. */
     sendDataToHc12();
@@ -166,8 +164,7 @@ void StateMachine::burn() {
     rocket_current_state = RocketState::ST_COAST;
     Serial.print(
         log_formatter.format(LogCategory::INFO, "Switch to COAST"));
-    sd_manager.write(
-        log_formatter.format(LogCategory::INFO, "Switch to COAST"));
+    sd_device.write(LogCategory::INFO, "Switch to COAST");
   }
 }
 
@@ -191,8 +188,8 @@ void StateMachine::coast() {
     Serial.print(log_formatter.format(navigation_data));
 #endif
     /* Writing raw data to SD card. */
-    sd_manager.write(log_formatter.format(sensor_data_collection));
-    sd_manager.write(log_formatter.format(navigation_data));
+    sd_device.write(sensor_data_collection);
+    sd_device.write(navigation_data);
 
     /* Sending raw data using HC12. */
     sendDataToHc12();
@@ -206,9 +203,8 @@ void StateMachine::coast() {
     Serial.print(log_formatter.format(
         LogCategory::INFO,
         "Ejection mechanism activated. Switch to DESCENT"));
-    sd_manager.write(log_formatter.format(
-        LogCategory::INFO,
-        "Ejection mechanism activated. Switch to DESCENT"));
+    sd_device.write(LogCategory::INFO,
+                    "Ejection mechanism activated. Switch to DESCENT");
     rocket_current_state = RocketState::ST_DESCENT;
   }
 }
@@ -232,8 +228,8 @@ void StateMachine::descend() {
     Serial.print(log_formatter.format(sensor_data_collection));
 #endif
     /* Writing raw data to SD card. */
-    sd_manager.write(log_formatter.format(sensor_data_collection));
-    sd_manager.write(log_formatter.format(navigation_data));
+    sd_device.write(sensor_data_collection);
+    sd_device.write(navigation_data);
 
     /* Sending raw data using HC12. */
     sendDataToHc12();
@@ -260,8 +256,12 @@ bool StateMachine::shouldEject() {
   bool isDescenting =
       (navigation_data.max_altitude - navigation_data.pos_ENU[2]) > 2.5;
 
+#ifdef FC_TEST_ENABLED
+  return isDescenting;
+#else
   bool isTimeToEject = since_burn > S_TO_MS(10);
   return isDescenting || isTimeToEject;
+#endif
 }
 
 void StateMachine::initializeNavigation() {
@@ -303,3 +303,5 @@ void StateMachine::sendDataToHc12() {
     since_transmit -= 1000 / HC12_SAMPLING_RATE;
   }
 }
+
+void StateMachine::updateSd() { sd_device.update(); }

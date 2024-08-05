@@ -15,21 +15,25 @@ class SdDevice : public LogDevice {
 public:
   SdDevice(LogFormatter *fmt) : LogDevice(fmt), file_name(FILE_NAME) {}
 
-  void begin() override {}
+  void begin() override;
   void write(LogCategory category, const char *message) override;
   void write(SensorDataCollection &data) override;
   void write(NavigationData &data) override;
 
-  void writeRaw(const byte *data, size_t length) override {}
+  void writeRaw(const byte *data, size_t length) override {};
 
-  bool available() override {}
+  bool available() override { return false; };
+
+  bool isConnected() override { return false; }
 
   void setFileName(const char *name) { strcpy(file_name, name); }
+
+  void update();
 
 private:
   SdFs sd;
   FsFile file;
-  RingBuf<FsFile, 512> file_buf;
+  RingBuf<FsFile, 512 * 200> file_buf;
   char file_name[50];
 };
 

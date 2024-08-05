@@ -6,7 +6,7 @@
 #include "Navigation.h"
 #include "NonBlockingServo.h"
 #include "RealTimeClock.h"
-#include "SDManager.h"
+#include "SdDevice.h"
 #include "SensorSet.h"
 #include "SerialDevice.h"
 #include "config.h"
@@ -23,6 +23,8 @@ public:
   void coast();
   void descend();
   void landed();
+
+  void updateSd();
 
 private:
   /* Sensor related objects. */
@@ -45,8 +47,8 @@ private:
 
   /* Logger. */
   DefaultLogFormatter log_formatter; // Log formatter for logging data.
-  SDManager sd_manager;         // SD card manager for writing data.
   SerialDevice hc12;            // Serial device for writing data.
+  SdDevice sd_device;           // SD card device for writing data.
   byte hc12_buffer[110];        // Buffer for HC12 communication device.
   elapsedMillis since_transmit; // Timer for HC12 communication device.
 

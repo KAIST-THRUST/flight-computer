@@ -11,8 +11,8 @@ void setup() { rocket_state_machine.begin(); }
 
 void loop() {
   /*-----------------------------------------------------------------*/
-  /* Servo part. */
-  // updateServoFromSerial(serv);
+  /* Logging part. */
+  rocket_state_machine.updateSd();
   /*-----------------------------------------------------------------*/
   switch (rocket_current_state) {
   case RocketState::ST_BOOT:
