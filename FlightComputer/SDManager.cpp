@@ -21,10 +21,10 @@ void SDManager::write(const String &data) {
 
   file.print(data); // Write data to file.
 
-  /* Close and reopen file every 60 seconds. */
-  if (file_opened && timer > 60 * 1000) {
+  /* Close and reopen file every 10 seconds. */
+  if (file_opened && timer > 10 * 1000) {
     close();
-    timer = timer - 60 * 1000;
+    timer = timer - 10 * 1000;
 
     /* Reopen file. */
     open();
