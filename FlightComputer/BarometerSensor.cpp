@@ -2,9 +2,7 @@
 
 BarometerSensor::BarometerSensor()
     : bmp(&BAROMETER_WIRE), bmp_pressure(bmp.getPressureSensor()),
-      bmp_temp(bmp.getTemperatureSensor()) {
-  sensor_data.data_count = DATA_COUNT;
-}
+      bmp_temp(bmp.getTemperatureSensor()) {}
 
 void BarometerSensor::begin(float *ptr) {
   data_ptr = ptr;

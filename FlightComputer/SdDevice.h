@@ -22,12 +22,16 @@ public:
 
   void writeRaw(const byte *data, size_t length) override {};
 
-  bool available() override { return false; };
+  int available() override { return false; };
 
   bool isConnected() override { return false; }
 
   void setFileName(const char *name) { strcpy(file_name, name); }
 
+  void flush() {
+    file_buf.sync();
+    file.close();
+  }
   void update();
 
 private:

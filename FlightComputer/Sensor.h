@@ -8,11 +8,6 @@
 
 #include "config.h"
 
-struct SensorData {
-  float values[MAX_DATA_COUNT] = {}; // Array of sensor output values.
-  int data_count;                    // Number of output data points.
-};
-
 class Sensor {
 public:
   virtual void begin(float *ptr) = 0; // Begin method.
@@ -20,12 +15,7 @@ public:
   virtual ~Sensor() = default; // Default destructor.
   virtual String toString() const = 0; // Convert sensor data to string.
 
-  const SensorData &getSensorData() const { // Getter for sensor_data.
-    return sensor_data;
-  }
-
 protected:
-  SensorData sensor_data; // Attribute holding sensor readings.
   float *data_ptr;        // Pointer to sensor_data.values.
 };
 

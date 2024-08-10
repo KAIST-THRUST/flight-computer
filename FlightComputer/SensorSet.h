@@ -34,29 +34,29 @@ struct SensorDataCollection {
         adc_data(sensor_data + GPSSensor::DATA_COUNT +
                  IMUSensor::DATA_COUNT + BarometerSensor::DATA_COUNT) {}
 
-  operator String() const {
-    char buffer[400];
-    sprintf(
-        buffer,
-        "Time: %lu\n"
-        "[GPS] Latitude: %.7f, Longitude: %.7f, Altitude: %.7f\n"
-        "[IMU] Acceleration: (%.7f, %.7f, %.7f)\n"
-        "      Angular velocity: (%.7f, %.7f, %.7f)\n"
-        "      Quaternion: (%.7f, %.7f, %.7f, %.7f)\n"
-        "[Barometer] Pressure: %.7f, Temperature: %.7f\n"
-        "[ADC] Voltage: %.7f, Pressure: %.7f",
-        current_time, gps_data[GPSSensor::LATITUDE],
-        gps_data[GPSSensor::LONGITUDE], gps_data[GPSSensor::ALTITUDE],
-        imu_data[IMUSensor::ACC_X], imu_data[IMUSensor::ACC_Y],
-        imu_data[IMUSensor::ACC_Z], imu_data[IMUSensor::ANG_VEL_X],
-        imu_data[IMUSensor::ANG_VEL_Y], imu_data[IMUSensor::ANG_VEL_Z],
-        imu_data[IMUSensor::QUAT_X], imu_data[IMUSensor::QUAT_Y],
-        imu_data[IMUSensor::QUAT_Z], imu_data[IMUSensor::QUAT_W],
-        barometer_data[BarometerSensor::PRESSURE],
-        barometer_data[BarometerSensor::TEMPERATURE],
-        adc_data[ADCSensor::VOLTAGE], adc_data[ADCSensor::PRESSURE]);
-    return String(buffer);
-  }
+  // operator String() const {
+  //   char buffer[400];
+  //   sprintf(
+  //       buffer,
+  //       "Time: %lu\n"
+  //       "[GPS] Latitude: %.7f, Longitude: %.7f, Altitude: %.7f\n"
+  //       "[IMU] Acceleration: (%.7f, %.7f, %.7f)\n"
+  //       "      Angular velocity: (%.7f, %.7f, %.7f)\n"
+  //       "      Quaternion: (%.7f, %.7f, %.7f, %.7f)\n"
+  //       "[Barometer] Pressure: %.7f, Temperature: %.7f\n"
+  //       "[ADC] Voltage: %.7f, Pressure: %.7f",
+  //       current_time, gps_data[GPSSensor::LATITUDE],
+  //       gps_data[GPSSensor::LONGITUDE], gps_data[GPSSensor::ALTITUDE],
+  //       imu_data[IMUSensor::ACC_X], imu_data[IMUSensor::ACC_Y],
+  //       imu_data[IMUSensor::ACC_Z], imu_data[IMUSensor::ANG_VEL_X],
+  //       imu_data[IMUSensor::ANG_VEL_Y], imu_data[IMUSensor::ANG_VEL_Z],
+  //       imu_data[IMUSensor::QUAT_X], imu_data[IMUSensor::QUAT_Y],
+  //       imu_data[IMUSensor::QUAT_Z], imu_data[IMUSensor::QUAT_W],
+  //       barometer_data[BarometerSensor::PRESSURE],
+  //       barometer_data[BarometerSensor::TEMPERATURE],
+  //       adc_data[ADCSensor::VOLTAGE], adc_data[ADCSensor::PRESSURE]);
+  //   return String(buffer);
+  // }
 };
 
 struct SensorSet {

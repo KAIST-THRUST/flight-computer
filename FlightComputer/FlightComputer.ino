@@ -10,10 +10,13 @@ static StateMachine rocket_state_machine;
 void setup() { rocket_state_machine.begin(); }
 
 void loop() {
-  /*-----------------------------------------------------------------*/
   /* Logging part. */
   rocket_state_machine.updateSd();
-  /*-----------------------------------------------------------------*/
+
+  /* Emergency ejection part. */
+  rocket_state_machine.shouldEmergencyEject();
+  
+  /* State machine part. */
   switch (rocket_current_state) {
   case RocketState::ST_BOOT:
     /* Boot state. */
@@ -42,6 +45,7 @@ void loop() {
 
   case RocketState::ST_LANDED:
     /* Landed state. */
+    rocket_state_machine.landed();
     break;
   }
 }

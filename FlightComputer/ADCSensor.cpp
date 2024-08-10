@@ -1,8 +1,6 @@
 #include "ADCSensor.h"
 
-ADCSensor::ADCSensor() : ads(ADC_I2C_ADDRESS, &ADC_WIRE) {
-  sensor_data.data_count = DATA_COUNT;
-}
+ADCSensor::ADCSensor() : ads(ADC_I2C_ADDRESS, &ADC_WIRE) {}
 
 void ADCSensor::begin(float *ptr) {
   data_ptr = ptr;

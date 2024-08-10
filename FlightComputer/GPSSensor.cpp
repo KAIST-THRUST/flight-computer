@@ -1,8 +1,6 @@
 #include "GPSSensor.h"
 
-GPSSensor::GPSSensor() : GPS(&GPS_SERIAL), is_fixed(false) {
-  sensor_data.data_count = DATA_COUNT;
-}
+GPSSensor::GPSSensor() : GPS(&GPS_SERIAL), is_fixed(false) {}
 
 void GPSSensor::begin(float *ptr) {
   data_ptr = ptr;

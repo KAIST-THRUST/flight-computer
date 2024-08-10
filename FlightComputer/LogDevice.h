@@ -44,7 +44,7 @@ public:
   virtual void writeRaw(const byte *data, size_t length) = 0;
 
   /* Check if data is available to read. */
-  virtual bool available() { return false; }
+  virtual int available() { return false; }
 
   /* Check if device is connected. */
   virtual bool isConnected() = 0;

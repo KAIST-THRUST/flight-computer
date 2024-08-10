@@ -64,18 +64,13 @@ void StateMachine::begin() {
   Serial.print(
       log_formatter.format(LogCategory::INFO, "SD card initialized."));
 
-  // sd_manager.write("Static fire test.\n"); // SD card test.
-  sd_device.write(LogCategory::INFO, "Static fire test.\n");
+  sd_device.write(LogCategory::INFO, "TU-1.f: Base of solid rocket.");
   memcpy(hc12_buffer, &rocket_current_state, 1);
   delay(5000);
   Serial.print(
       log_formatter.format(LogCategory::INFO, "Switch to BOOT"));
   sd_device.write(LogCategory::INFO, "Switch to BOOT");
   since_boot = 0;
-
-#ifdef FC_TEST_ENABLED
-  navigation_data.pos_ENU[2] = 3.14f; // For testing.
-#endif
 }
 
 void StateMachine::boot() {
@@ -83,7 +78,7 @@ void StateMachine::boot() {
   sendDataToHc12();
 
   /* Check if all sensors are fixed. */
-  if (sensor_set.isValid()) {
+  if (shouldChangeToStandBy()) {
     rocket_current_state = RocketState::ST_STAND_BY;
     digitalWrite(LED_BUILTIN, LOW); // Turn off LED.
     memcpy(hc12_buffer, &rocket_current_state, 1);
@@ -234,13 +229,46 @@ void StateMachine::descend() {
     /* Sending raw data using HC12. */
     sendDataToHc12();
   }
+
+  if (shouldChangeToLanded()) {
+    rocket_current_state = RocketState::ST_LANDED;
+    Serial.print(
+        log_formatter.format(LogCategory::INFO, "Switch to LANDED"));
+    sd_device.write(LogCategory::INFO, "Switch to LANDED");
+    sd_device.flush();
+  }
+}
+
+void StateMachine::landed() {
+  bool send_lat = true;
+  if (since_transmit > 1000) {
+    memcpy(hc12_buffer, &rocket_current_state, 1);
+    if (send_lat) {
+      memcpy(hc12_buffer + 1,
+             &sensor_data_collection.gps_data[GPSSensor::LATITUDE], 4);
+    } else {
+      memcpy(hc12_buffer + 1,
+             &sensor_data_collection.gps_data[GPSSensor::LONGITUDE], 4);
+    }
+    send_lat = !send_lat;
+    hc12.writeRaw(hc12_buffer, 5);
+    since_transmit -= 1000;
+  }
+}
+
+bool StateMachine::shouldChangeToStandBy() {
+#ifdef FC_TEST_ENABLED
+  return since_boot > S_TO_MS(10);
+#else
+  return sensor_set.isValid();
+#endif
 }
 
 bool StateMachine::shouldChangeToBurn() {
 #ifdef FC_TEST_ENABLED
   return since_fix > S_TO_MS(30);
 #else
-  return sensor_data_collection.adc_data[ADCSensor::PRESSURE] > 0.5;
+  return sensor_data_collection.adc_data[ADCSensor::PRESSURE] > 5.0;
 #endif
 }
 
@@ -248,20 +276,20 @@ bool StateMachine::shouldChangeToCoast() {
 #ifdef FC_TEST_ENABLED
   return true;
 #else
-  return sensor_data_collection.adc_data[ADCSensor::PRESSURE] < 1.0;
+  return sensor_data_collection.adc_data[ADCSensor::PRESSURE] < 0.5;
 #endif
+}
+
+bool StateMachine::shouldChangeToLanded() {
+  return since_burn > MIN_TO_MS(3);
 }
 
 bool StateMachine::shouldEject() {
   bool isDescenting =
       (navigation_data.max_altitude - navigation_data.pos_ENU[2]) > 2.5;
 
-#ifdef FC_TEST_ENABLED
-  return isDescenting;
-#else
   bool isTimeToEject = since_burn > S_TO_MS(10);
   return isDescenting || isTimeToEject;
-#endif
 }
 
 void StateMachine::initializeNavigation() {
@@ -305,3 +333,25 @@ void StateMachine::sendDataToHc12() {
 }
 
 void StateMachine::updateSd() { sd_device.update(); }
+
+void StateMachine::shouldEmergencyEject() {
+  if (hc12.available() >= 4) {
+    byte buffer[4];
+    byte eject_code[4] = {0xAA, 0xAA, 0xAA, 0xAA};
+
+    hc12.read(buffer, 2);
+    if (memcmp(buffer, eject_code, 2) == 0) {
+      // Servo rotation.
+      if (!servo.isrotating()) {
+        servo.rotate(90);
+      }
+      Serial.print(log_formatter.format(
+          LogCategory::INFO,
+          "Emergency ejection mechanism activated. Swtich to DESCENT"));
+      sd_device.write(
+          LogCategory::INFO,
+          "Emergency ejection mechanism activated. Switch to DESCENT");
+      rocket_current_state = RocketState::ST_DESCENT;
+    }
+  }
+}

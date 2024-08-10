@@ -14,7 +14,10 @@ public:
   SerialDevice(HardwareSerial &hs, LogFormatter *fmt)
       : LogDevice(fmt), serial(hs) {}
 
-  void begin() override { serial.begin(HC12_BAUD_RATE); }
+  void begin() override {
+    serial.begin(HC12_BAUD_RATE);
+    serial.setTimeout(0);
+  }
 
   void write(LogCategory category, const char *message) override {
     serial.print(formatter->format(category, message));
@@ -33,7 +36,7 @@ public:
     serial.flush();
   }
 
-  bool available() override { return serial.available(); }
+  int available() override { return serial.available(); }
 
   bool isConnected() override { return serial; }
 
@@ -49,7 +52,10 @@ class UsbSerialDevice : public LogDevice {
 public:
   UsbSerialDevice(usb_serial_class &serial, LogFormatter *fmt)
       : LogDevice(fmt), serial(serial) {}
-  void begin() override { serial.begin(HC12_BAUD_RATE); }
+  void begin() override {
+    serial.begin(BAUD_RATE);
+    serial.setTimeout(0);
+  }
 
   void write(LogCategory category, const char *message) override {
     serial.print(formatter->format(category, message));
@@ -67,7 +73,7 @@ public:
     serial.write(data, length);
   }
 
-  bool available() override { return serial.available(); }
+  int available() override { return serial.available(); }
 
   bool isConnected() override { return serial; }
 

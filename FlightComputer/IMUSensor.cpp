@@ -1,8 +1,6 @@
 #include "IMUSensor.h"
 
-IMUSensor::IMUSensor() : bno(55, IMU_I2C_ADDRESS, &IMU_WIRE) {
-  sensor_data.data_count = DATA_COUNT;
-}
+IMUSensor::IMUSensor() : bno(55, IMU_I2C_ADDRESS, &IMU_WIRE) {}
 
 void IMUSensor::begin(float *ptr) {
   data_ptr = ptr;

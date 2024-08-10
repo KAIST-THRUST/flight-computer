@@ -24,7 +24,9 @@ public:
   void descend();
   void landed();
 
+  /* Other functions. */
   void updateSd();
+  void shouldEmergencyEject();
 
 private:
   /* Sensor related objects. */
@@ -58,6 +60,7 @@ private:
   elapsedMillis since_burn; // Time elapsed since burn started.
 
   /* Helper functions for state transition condition check. */
+  bool shouldChangeToStandBy();
   bool shouldChangeToBurn();
   bool shouldChangeToCoast();
   bool shouldEject();

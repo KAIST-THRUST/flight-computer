@@ -27,6 +27,8 @@ void SdDevice::begin() {
 
 void SdDevice::write(LogCategory category, const char *message) {
   file_buf.write(formatter->format(category, message));
+  // byte *buf_ptr = formatter->format(category, message);
+  // file_buf.write(buf_ptr, buf_ptr[0]); // First byte is the length of the message.
   if (file_buf.getWriteError()) {
 #ifdef FC_DEBUG_ENABLED
     Serial.println("Write error.");
